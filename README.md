@@ -1,4 +1,4 @@
-# PicoScope 4000 Series - MATLAB Generic Instrument Driver
+# PicoScope 4000 Series (A API) - MATLAB Generic Instrument Driver
 
 This MATLAB® Generic Instrument Driver allows you to acquire data from 
 PicoScope® 4000 Series High Resolution and Automotive Oscilloscopes and control in-built signal generator functionality.  The data could be processed in MATLAB using functions from Toolboxes such as [Signal Processing Toolbox](https://www.mathworks.com/products/signal.html). 
