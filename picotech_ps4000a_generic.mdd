@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.1.28</InstrumentVersion>
+   <InstrumentVersion>1.2.1</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -17,11 +17,11 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright (C) 2014 - 2015. Pico Technology Ltd. All rights reserved. 
+% Copyright © 2014 - 2017. Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
-    fprintf('\nCopyright (C) 2014 - 2017 Pico Technology Ltd. All rights reserved.\n');
+    fprintf('\nCopyright © 2014 - 2017 Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
     fprintf('PicoScope 4000 Series (A API) MATLAB Instrument Driver\n');
     fprintf('\n');
@@ -29,21 +29,21 @@
     % Load main and wrapper libraries according to OS Platform
     
     % Only load library once 
-    if(libisloaded('ps4000a'))
+    if (libisloaded('ps4000a'))
        
         % Do nothing
         
     else
         
-        if(ispc)
+        if (ispc)
             
             [ps4000aNotFound, ps4000aWarnings] = loadlibrary('ps4000a.dll', @ps4000aMFile);
 
-        elseif(ismac)
+        elseif (ismac)
             
             [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000a.dylib', @ps4000aMFile, 'alias', 'ps4000a');
             
-        elseif(isunix)
+        elseif (isunix)
             
             [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000a.so', @ps4000aMFile, 'alias', 'ps4000a');
                 
@@ -56,21 +56,21 @@
     end
     
     % Only load library once 
-    if(libisloaded('ps4000aWrap'))
+    if (libisloaded('ps4000aWrap'))
 
         % Do nothing
         
     else
         
-        if(ispc)
+        if (ispc)
             
             [ps4000aNotFound, ps4000aWarnings] = loadlibrary('ps4000aWrap.dll', @ps4000aWrapMFile);
             
-        elseif(ismac)
+        elseif (ismac)
             
             [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000aWrap.dylib', @ps4000aWrapMFile, 'alias', 'ps4000aWrap');
                 
-        elseif(isunix)
+        elseif (isunix)
             
             [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000aWrap.so', @ps4000aWrapMFile, 'alias', 'ps4000aWrap');
                 
@@ -106,11 +106,11 @@
     [status, count, serials, serialLth] = calllib('ps4000a', ...
         'ps4000aEnumerateUnits', count, serials, serialLth);
     
-    if(status == PicoStatus.PICO_OK)
+    if (status == PicoStatus.PICO_OK)
         
         fprintf('Number of units found: %d\n\nSerial number(s): %s\n\n', count, serials);
         
-    elseif(status == PicoStatus.PICO_NOT_FOUND)
+    elseif (status == PicoStatus.PICO_NOT_FOUND)
         
         error('No devices found.');
         
