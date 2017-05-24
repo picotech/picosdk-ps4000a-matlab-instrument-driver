@@ -1,8 +1,8 @@
 %% PS4000AConfig Configure path information
 % Configures paths according to platforms and loads information from
-% prototype files for PicoScope 4000 Series Oscilloscopes using the 'A' API
-% functions. The folder that this file is located in must be added to the
-% MATLAB path.
+% prototype files for PicoScope 4000 Series Oscilloscopes using the
+% functions from the ps4000a/libps4000a shared library. The folder that this 
+% file is located in must be added to the MATLAB path.
 %
 % Platform Specific Information:-
 %
@@ -61,7 +61,7 @@ if (isempty(strfind(path, ps4000aConfigInfo.archPath)))
     
 		error('PS4000aConfig:OperatingSystemNotSupported', 'Operating system not supported - please contact support@picotech.com');
     
-	end
+    end
 	
 end
 
@@ -75,8 +75,8 @@ ps4000aConfigInfo.linuxDriverPath = '/opt/picoscope/lib/';
 ps4000aConfigInfo.winSDKInstallPath = 'C:\Program Files\Pico Technology\SDK';
 ps4000aConfigInfo.winDriverPath = fullfile(ps4000aConfigInfo.winSDKInstallPath, 'lib');
 
-ps4000aConfigInfo.win32OnWin64SDKInstallPath = 'C:\Program Files (x86)\Pico Technology\SDK'; % Windows 32-bit version of MATLAB on Windows 64-bit
-ps4000aConfigInfo.win32OnWin64DriverPath = fullfile(ps4000aConfigInfo.win32OnWin64SDKInstallPath, 'lib');
+ps4000aConfigInfo.woW64SDKInstallPath = 'C:\Program Files (x86)\Pico Technology\SDK'; % Windows 32-bit version of MATLAB on Windows 64-bit
+ps4000aConfigInfo.woW64DriverPath = fullfile(ps4000aConfigInfo.woW64SDKInstallPath, 'lib');
 
 if (ismac())
     
@@ -85,7 +85,7 @@ if (ismac())
     
     setenv('DYLD_LIBRARY_PATH', '/Applications/PicoScope6.app/Contents/Resources/lib');
     
-    if(strfind(getenv('DYLD_LIBRARY_PATH'), '/Applications/PicoScope6.app/Contents/Resources/lib'))
+    if (strfind(getenv('DYLD_LIBRARY_PATH'), '/Applications/PicoScope6.app/Contents/Resources/lib'))
        
         % Add path to drivers if not already on the MATLAB path
         if (isempty(strfind(path, ps4000aConfigInfo.macDriverPath)))
@@ -109,30 +109,30 @@ elseif (isunix())
             
     end
         
-elseif(ispc)
+elseif (ispc())
     
     % Microsoft Windows operating system
     
     % Set path to dll files if the Pico Technology SDK Installer has been
     % used or place dll files in the same folder. Detect if 32-bit version
     % of MATLAB on 64-bit Microsoft Windows.
-    if(strcmp(ps4000aConfigInfo.archStr, 'win32') && exist('C:\Program Files (x86)\', 'dir') == 7)
+    if (strcmp(ps4000aConfigInfo.archStr, 'win32') && exist('C:\Program Files (x86)\', 'dir') == 7)
        
         % Add path to drivers if not already on the MATLAB path
-        if (isempty(strfind(path, ps4000aConfigInfo.win32OnWin64DriverPath)))
+        if (isempty(strfind(path, ps4000aConfigInfo.woW64DriverPath)))
         
             try
                 
-                addpath(ps4000aConfigInfo.win32OnWin64DriverPath);
+                addpath(ps4000aConfigInfo.woW64DriverPath);
                 
 			catch err
            
 				warning('PS4000aConfig:DirectoryNotFound', ['Folder C:\Program Files (x86)\Pico Technology\SDK\lib\ not found. '...
 					'Please ensure that the location of the library files are on the MATLAB path.']);
             
-			end
+            end
 			
-		end
+        end
         
     else
         
@@ -151,9 +151,9 @@ elseif(ispc)
 				warning('PS4000aConfig:DirectoryNotFound', ['Folder C:\Program Files\Pico Technology\SDK\lib\ not found. '...
 					'Please ensure that the location of the library files are on the MATLAB path.']);
             
-			end
+            end
 			
-		end
+        end
         
     end
     
@@ -220,5 +220,5 @@ cd(ps4000aConfigInfo.workingDir);
 
 ps4000aConfigInfo.ps4000aMFile = str2func(strcat('ps4000aMFile_', ps4000aConfigInfo.archStr));
 
-[ps4000aMethodinfo, ps4000aStructs, ps4000aEnuminfo, ps4000aThunkLibName] = ps4000aMFile(); 
+[ps4000aMethodinfo, ps4000aStructs, ps4000aEnuminfo, ps4000aThunkLibName] = ps4000aConfigInfo.ps4000aMFile(); 
 
