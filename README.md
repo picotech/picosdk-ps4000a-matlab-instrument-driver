@@ -40,6 +40,13 @@ For PicoScope 4224, 4224 IEPE, 4424, 4226, 4227 and 4262 models, please use the
 
 * MATLAB 2015b is recommended for 32-bit versions of MATLAB on Microsoft Windows operating systems.
 
+### Installing the Instrument Driver files
+
+We recommend using the [Add-Ons Explorer](https://uk.mathworks.com/help/matlab/matlab_env/get-add-ons.html) in MATLAB in order to install these files and obtain updates.
+
+If your version of MATLAB does not have the Add-Ons Explorer, download the zip file from the [MATLAB Central File Exchange page](https://uk.mathworks.com/matlabcentral/fileexchange/46895-picoscope-4000-series--a-api--matlab-generic-instrument-driver)
+ and add the root and sub-folders to the MATLAB path.
+
 ### Installing drivers
 
 Drivers are available for the following platforms. Refer to the subsections below for further information.
@@ -50,7 +57,7 @@ Drivers are available for the following platforms. Refer to the subsections belo
 
 #### Linux
 
-* Follow the instructions from our [Linux Software & Drivers for Oscilloscopes and Data Loggers](https://www.picotech.com/downloads/linux) to install the required `libps3000a` and `libpswrappers` driver packages.
+* Follow the instructions from our [Linux Software & Drivers for Oscilloscopes and Data Loggers page](https://www.picotech.com/downloads/linux) to install the required `libps4000a` and `libpswrappers` driver packages.
 
 ### Programmer's Guides
 
@@ -70,9 +77,13 @@ Issues can be reported via the [Issues tab](https://github.com/picotech/picosdk-
 
 Please leave a comment and rating for this submission on our [MATLAB Central File Exchange page](https://uk.mathworks.com/matlabcentral/fileexchange/46895-picoscope-4000-series--a-api--matlab-generic-instrument-driver).
 
+## Contributing
+
+Contributions to examples are welcome. Please refer to our [guidelines for contributing](.github/CONTRIBUTING.md) for further information.
+
 ## Copyright and licensing
 
-picosdk-ps4000a-matlab-instrument-driver is Copyright (C) 2014 - 2017 Pico Technology Ltd. All rights reserved. See [LICENSE.md](LICENSE.md) for license terms. 
+See [LICENSE.md](LICENSE.md) for license terms. 
 
 *PicoScope* is a registered trademark of Pico Technology Ltd. 
 
@@ -83,7 +94,5 @@ is a trademark of The Mathworks, Inc.
 
 *Linux* is the registered trademark of Linus Torvalds in the U.S. and other countries.
 
-## Contributing
-
-Contributions to examples are welcome. Please refer to our [guidelines for contributing](.github/CONTRIBUTING.md) for further information.
+Copyright © 2014-2017 Pico Technology Ltd. All rights reserved. 
 
