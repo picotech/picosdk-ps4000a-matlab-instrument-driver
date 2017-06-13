@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.1</InstrumentVersion>
+   <InstrumentVersion>1.2.2</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -17,11 +17,11 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright © 2014 - 2017. Pico Technology Ltd. All rights reserved. 
+% Copyright © 2014-2017 Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
-    fprintf('\nCopyright © 2014 - 2017 Pico Technology Ltd. All rights reserved.\n');
+    fprintf('\nCopyright © 2014-2017 Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
     fprintf('PicoScope 4000 Series (A API) MATLAB Instrument Driver\n');
     fprintf('\n');
@@ -145,6 +145,11 @@
     obj.DriverData.constants.PS4000A_GAUSSIAN_MAX_FREQUENCY     = 1000000;
     obj.DriverData.constants.PS4000A_MIN_FREQUENCY              = 0.03;
 
+    % Maximum number of devices using this driver
+    % -------------------------------------------
+    
+    obj.DriverData.constants.PS4000A_MAX_UNITS = 64;
+    
     % PicoScope 4000 Series Models (using the ps4000a driver)
 
     MODEL_NONE      = 'NONE';
@@ -514,7 +519,7 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-    if(isfield(obj.DriverData,'unitHandle'))
+    if (isfield(obj.DriverData,'unitHandle'))
 
         unitHandle = obj.DriverData.unitHandle;
     
@@ -523,7 +528,7 @@
             return;
         end
 
-        if(~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
+        if (~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
 
             % If the drivers are no longer loaded, return without doing
             % anything
@@ -535,29 +540,103 @@
 
         disconnectStatus = calllib('ps4000a', 'ps4000aCloseUnit', unitHandle);
 
-        if(disconnectStatus == PicoStatus.PICO_OK)
+        if (disconnectStatus == PicoStatus.PICO_OK)
 
             fprintf(['Connection to PicoScope %s with serial number %s ' ...
                 'closed successfully.\n'], obj.InstrumentModel, obj.DriverData.unitSerial);
 
+        elseif (disconnectStatus == PicoStatus.PICO_INVALID_HANDLE)
+            
+            % No device with the handle, so should be disconnected.
+            return;
+            
         else
+            
+            if (isfield(obj.DriverData, 'unitSerial'))
 
-            error('Disconnect:ConnectionNotClosed',['Connection to PicoScope %s with serial number %s ' ...
-                'not closed. Status code %d\n'], ...
-                obj.InstrumentModel, obj.DriverData.unitSerial, disconnectStatus);
+                error('Disconnect:ConnectionNotClosed',['Connection to PicoScope %s with serial number %s ' ...
+                    'not closed. Status code %d\n'], ...
+                    obj.InstrumentModel, obj.DriverData.unitSerial, disconnectStatus);
+                
+            end
 
         end
 
-        unloadlibrary('ps4000aWrap');
-        unloadlibrary('ps4000a');
+        % Only unload libraries if there are no more connected
+        % oscilloscopes
+        
+        % Find the first handle number for the platform
+        firstHandle = 0;
+        
+        if (ispc())
+            
+            firstHandle = 16384; % Windows PC
+            
+        else 
+           
+            firstHandle = 1; % Mac OS X and Linux
+            
+        end
+        
+        % Test the connection to a range of handle values up to a maximum
+        lastHandle = firstHandle + obj.DriverData.constants.PS2000A_MAX_UNITS - 1;
+        
+        % Create an array to store status values for ping tests.
+        % On Windows PCs, the first handle is 16384 so this will need to be
+        % accounted for.
+        if (ispc())
+            
+            pingStatus = zeros(lastHandle, 1);
+            
+        else
+            
+            pingStatus = zeros(obj.DriverData.constants.PS4000A_MAX_UNITS, 1);
+            
+        end
+        
+        % Test the handle value ranges
+        for h = firstHandle:lastHandle
 
+            pingStatus(h, 1) = calllib('ps4000a', 'ps4000aPingUnit', h);
+            
+        end
+        
+        if (ispc())
+                
+            % Need to resize arrray as first handle is not 0
+            pingStatus(1:firstHandle - 1) = [];
+                
+        end
+        
+        if (any(pingStatus == PicoStatus.PICO_OK))
+         
+          % Device still connected
+          disp('Other PicoScope 4000 Series devices using the ps4000a shared library are still connected - libraries will not be unloaded.');
+          
+        else
+
+            unloadlibrary('ps4000aWrap');
+            unloadlibrary('ps4000a');
+            
+            if (~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
+
+                disp('Libraries unloaded successfully.');
+
+            else
+
+                error('Libraries not unloaded.');
+
+            end
+
+        end
+       
         if (~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
 
             disp('Libraries unloaded successfully.');
 
         else
 
-            error('Libraries not unloaded successfully.');
+            error('Libraries not unloaded.');
 
         end
         
