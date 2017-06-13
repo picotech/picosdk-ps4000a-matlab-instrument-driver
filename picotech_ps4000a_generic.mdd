@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.2</InstrumentVersion>
+   <InstrumentVersion>1.2.3</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1242,6 +1242,22 @@ When used in Streaming mode, this is the maximum number of raw samples before th
             </Property>
          </PropertyInfo>
          <MethodInfo>
+            <Method>
+               <Name>deviceReset</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <MCode>function deviceReset(obj)
+% For group functions, OBJ is the group object. For
+% base device functions, OBJ is the device object.
+
+    % Show warning message
+    warning('PS4000AInstrumentDriver:DeviceResetNotSupported', ...
+        'devicereset is not supported by this Instrument Driver - please use the resetDevice function instead.');</MCode>
+               </Code>
+               <Description>The devicereset function is not supported by this Instrument Driver. Please use the resetDevice function instead.</Description>
+            </Method>
             <Method>
                <Name>getUnitInfo</Name>
                <Location>parent</Location>
