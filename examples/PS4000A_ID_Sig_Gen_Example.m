@@ -26,13 +26,14 @@
 %   PS4000A_ID_Sig_Gen_Example;
 %
 % *Description:*
-%     Demonstrates how to call functions in order to control the signal
-%     generator output (where available) of a PicoScope 4000 Series
-%     Oscilloscope using the underlying 'A' API functions.
+%     Demonstrates how to call Instrument Driver functions in order to control the signal
+%     generator output (where available) of a PicoScope 4000 series
+%     oscilloscope using the underlying (lib)ps4000a shared library API
+%     functions.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* (C) Pico Technology Limited 2014 - 2015. All rights reserved.
+% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
 
 %% Test Setup
 % For this example the 'Gen' output of the oscilloscope was connected to

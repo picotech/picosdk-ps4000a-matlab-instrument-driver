@@ -23,15 +23,15 @@
 %
 % *Description:*
 %     Demonstrates how to call functions in order to capture data in
-%     streaming mode data from a PicoScope 4000 Series Oscilloscope using 
-%     the underlying 'A' API.
+%     streaming mode data from a PicoScope 4000 series oscilloscope using
+%     the underlying (lib)ps4000a shared library API functions.
 %
 % *Note:* Not all device and group object functions used in this example
 % are compatible with the Test and Measurement Tool.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* (C) Pico Technology Limited 2014 - 2015. All rights reserved.
+% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
 
 %% Suggested Input Test Signals
 % This example was published using the following test signals:
