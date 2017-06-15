@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.3</InstrumentVersion>
+   <InstrumentVersion>1.2.4</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -308,6 +308,8 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
             case PS4000aConstants.MODEL_PS4425
 
@@ -318,6 +320,8 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
             case PS4000aConstants.MODEL_PS4444
 
@@ -328,6 +332,8 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.TRUE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
                 
             case PS4000aConstants.MODEL_PS4824
 
@@ -338,6 +344,8 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
             otherwise
 
@@ -349,11 +357,22 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_ZERO;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_ZERO;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_ZERO;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
                 error('Unit not supported');
 
         end
-
+        
+        % TODO: - register callback function for intelligent probes
+        if (obj.DriverData.hasIntelligentProbeInterface == PicoConstants.TRUE)
+           
+            
+            
+        end
+        
+        
+        
         % Find Arbitrary Waveform values - if Arbitrary Waveform Generator
         % is present, use default values.
 
