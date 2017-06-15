@@ -55,6 +55,29 @@ channelB = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B;
 
 %% Device Connection
 
+% Check if an Instrument session using the device object 'ps4000aDeviceObj'
+% is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
+if (exist('ps4000aDeviceObj', 'var') && ps4000aDeviceObj.isvalid && strcmp(ps4000aDeviceObj.status, 'open'))
+    
+    openDevice = questionDialog(['Device object ps4000aDeviceObj has an open connection. ' ...
+        'Do you wish to close the connection and continue?'], ...
+        'Device Object Connection Open');
+    
+    if (openDevice == PicoConstants.TRUE)
+        
+        % Close connection to device
+        disconnect(ps4000aDeviceObj);
+        delete(ps4000aDeviceObj);
+        
+    else
+
+        % Exit script if User 
+        return;
+        
+    end
+    
+end
+
 % Create device -  specify serial number if required
 % Specify serial number as 2nd argument if required.
 ps4000aDeviceObj = icdevice('picotech_ps4000a_generic', ''); 
