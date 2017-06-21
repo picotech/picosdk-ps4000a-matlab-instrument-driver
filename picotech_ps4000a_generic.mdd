@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.4</InstrumentVersion>
+   <InstrumentVersion>1.2.5</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -73,15 +73,15 @@
         
         if (ismac())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000aWrap.dylib', ps4000aWrapMFile, 'alias', 'ps4000aWrap');
+            [ps4000aWrapNotFound, ps4000aWrapWarnings] = loadlibrary('libps4000aWrap.dylib', ps4000aWrapMFile, 'alias', 'ps4000aWrap');
     
         elseif (isunix())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000aWrap.so', ps4000aWrapMFile, 'alias', 'ps4000aWrap');
+            [ps4000aWrapNotFound, ps4000aWrapWarnings] = loadlibrary('libps4000aWrap.so', ps4000aWrapMFile, 'alias', 'ps4000aWrap');
                 
         elseif (ispc())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('ps4000aWrap.dll', ps4000aWrapMFile);
+            [ps4000aWrapNotFound, ps4000aWrapWarnings] = loadlibrary('ps4000aWrap.dll', ps4000aWrapMFile);
         
         else
             
@@ -378,22 +378,22 @@
         % Confirm the device resolution if it has flexible resolution
         if (obj.DriverData.hasFlexibleResolution == PicoConstants.TRUE)
             
-            pResolution = libpointer('uint32Ptr', 0);
+            pResolution = libpointer('enPS4000ADeviceResolution', obj.DriverData.enums.enPS4000ADeviceResolution.PS4000A_DR_12BIT);
                       
             status = calllib('ps4000a', 'ps4000aGetDeviceResolution', ...
-                obj.DriverData.unitHandle, pResolution)
+                obj.DriverData.unitHandle, pResolution);
             
             if (status == PicoStatus.PICO_OK)
                 
-                resolutionEnumValue = pResolution.Value
+                resolutionEnumValue = pResolution.Value;
                 
                 switch (resolutionEnumValue)
                     
-                    case obj.DriverData.enums.enPS4000ADeviceResolution.PS4000A_DR_12BIT
+                    case 'PS4000A_DR_12BIT'
                         
                         obj.DriverData.resolution = 12;
                         
-                    case obj.DriverData.enums.enPS4000ADeviceResolution.PS4000A_DR_14BIT
+                    case 'PS4000A_DR_14BIT'
                         
                         obj.DriverData.resolution = 14;
                         
@@ -2124,11 +2124,11 @@ For further information on the ps4000aStop function please refer to the PicoScop
 
     fprintf('Setting Device Parameters...\n\n');
     
-    range10mV = obj.DriverData.enums.ps4000aEnuminfo.enPicoConnectProbeRange.PICO_X1_PROBE_10MV;
-    range20mV = obj.DriverData.enums.ps4000aEnuminfo.enPicoConnectProbeRange.PICO_X1_PROBE_20MV;
-    range50mV = obj.DriverData.enums.ps4000aEnuminfo.enPicoConnectProbeRange.PICO_X1_PROBE_50MV;
-    range50V  = obj.DriverData.enums.ps4000aEnuminfo.enPicoConnectProbeRange.PICO_X1_PROBE_50V;
-    range200V = obj.DriverData.enums.ps4000aEnuminfo.enPicoConnectProbeRange.PICO_X1_PROBE_200V;
+    range10mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_10MV;
+    range20mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_20MV;
+    range50mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_50MV;
+    range50V  = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_50V;
+    range200V = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_200V;
     
     % Reset Channels
     [status] = invoke(obj, 'setChannelDefaults');
@@ -2190,7 +2190,7 @@ For further information on the ps4000aStop function please refer to the PicoScop
     
     fprintf('\n');
     
-    if(obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
+    if (obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
             obj.DriverData.sigGenType == PicoConstants.SIG_GEN_AWG)
        
         fprintf('Default Signal generator parameters:-\n\n');
@@ -2271,14 +2271,14 @@ None
     fprintf('Default Channel Setup:-\n');
     fprintf('-----------------------\n\n');
 
-    chA = 0; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
-    chB = 1; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B;
-    chC = 2; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C;
-    chD = 3; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D;
-    chE = 4; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E;
-    chF = 5; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F;
-    chG = 6; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G;
-    chH = 7; obj.DriverData.enums.ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H;
+    chA = 0; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A;
+    chB = 1; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B;
+    chC = 2; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C;
+    chD = 3; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D;
+    chE = 4; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E;
+    chF = 5; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F;
+    chG = 6; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G;
+    chH = 7; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H;
 
     channelCount = obj.DriverData.channelCount;
     
@@ -2287,7 +2287,7 @@ None
     % Assign values used repeatedly to local variable
 
     true = PicoConstants.TRUE;
-    range5V = obj.DriverData.enums.ps4000aEnuminfo.enPS4000ARange.PS4000A_5V;
+    range5V = obj.DriverData.enums.enPS4000ARange.PS4000A_5V;
     analogueOffset = 0.0;
     
     % Matrix of values to represent channels (rows) x properties (cols)
@@ -2317,35 +2317,35 @@ None
     obj.DriverData.channelSettings = chSettings;
     
     status(1) = invoke(obj, 'ps4000aSetChannel', chA, true, true, range5V, analogueOffset);
-    fprintf('Channel A:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+    fprintf('Channel A:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
     status(2) = invoke(obj, 'ps4000aSetChannel', chB, true, true, range5V, analogueOffset);
-    fprintf('Channel B:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+    fprintf('Channel B:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
     if(obj.DriverData.channelCount == PicoConstants.QUAD_SCOPE || ...
             obj.DriverData.channelCount == PicoConstants.OCTO_SCOPE)
         
         status(3) = invoke(obj, 'ps4000aSetChannel', chC, true, true, range5V, analogueOffset);
-        fprintf('Channel C:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel C:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(4) = invoke(obj, 'ps4000aSetChannel', chD, true, true, range5V, analogueOffset);
-        fprintf('Channel D:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel D:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
     end
     
     if(obj.DriverData.channelCount == PicoConstants.OCTO_SCOPE)
         
         status(5) = invoke(obj, 'ps4000aSetChannel', chE, true, true, range5V, analogueOffset);
-        fprintf('Channel E:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel E:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(6) = invoke(obj, 'ps4000aSetChannel', chF, true, true, range5V, analogueOffset);
-        fprintf('Channel F:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel F:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(7) = invoke(obj, 'ps4000aSetChannel', chG, true, true, range5V, analogueOffset);
-        fprintf('Channel G:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel G:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(8) = invoke(obj, 'ps4000aSetChannel', chH, true, true, range5V, analogueOffset);
-        fprintf('Channel H:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel H:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
        
     end
     
