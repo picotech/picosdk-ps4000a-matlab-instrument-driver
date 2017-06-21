@@ -96,7 +96,6 @@
     
     [~, obj.DriverData.structs, obj.DriverData.enums, ~] = ps4000aMFile(); 
     
-    
     % Define constant values used by this Instrument Driver
     % =====================================================
     
@@ -1600,7 +1599,7 @@ For further information on the ps4000aGetAnalogueOffset function please refer to
 % base device functions, OBJ is the device object.
 
     % Current info supported is PS4000A_CI_RANGES
-    info = 0; %ps4000aEnuminfo.enPS4000AChannelInfo.PS4000A_CI_RANGES
+    info = obj.DriverData.enums.enPS4000AChannelInfo.PS4000A_CI_RANGES;
     probe = 0;
     ranges = zeros(10, 1);
     length = 0;
@@ -2408,10 +2407,11 @@ For further information, please also refer to the ps4000aSetChannel function.</D
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
-    % Check ratio mode is not aggregated (ps4000aEnuminfo.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
-    if(ratioMode ~= 1)
-        
-        deviceObj = get(obj, 'Parent');
+    deviceObj = get(obj, 'Parent');
+    
+    % Check ratio mode is not aggregated 
+    if(ratioMode ~= deviceObj.DriverData.enums.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
+            
         unitHandle = deviceObj.DriverData.unitHandle;
         
         channelCount = deviceObj.DriverData.channelCount;
@@ -2503,31 +2503,31 @@ For further information, please also refer to the ps4000aSetChannel function.</D
 
                             channelA = bufferValues;
 
-                        case 1 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
                             channelB = bufferValues;
 
-                        case 2 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
                             channelC = bufferValues;
 
-                        case 3 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
                             channelD = bufferValues;
                             
-                        case 4 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
                             channelE = bufferValues;
 
-                        case 5 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
                             channelF = bufferValues;
 
-                        case 6 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
                             channelG = bufferValues;
 
-                        case 7 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
                             channelH = bufferValues;
 
@@ -2946,10 +2946,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
-    % Check ratio mode is not aggregated (ps4000aEnuminfo.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
-    if(ratioMode ~= 1)
+    deviceObj = get(obj, 'Parent');
+    
+    % Check ratio mode is not aggregated
+    if (ratioMode ~= deviceObj.DriverData.enums.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
         
-        deviceObj = get(obj, 'Parent');
         unitHandle = deviceObj.DriverData.unitHandle;
         
         channelCount = deviceObj.DriverData.channelCount;
@@ -3061,35 +3062,35 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                     
                     switch(ch - 1)
 
-                        case 0 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A')
 
                             channelA = bufferValues;
 
-                        case 1 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B')
 
                             channelB = bufferValues;
 
-                        case 2 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C')
 
                             channelC = bufferValues;
 
-                        case 3 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D')
 
                             channelD = bufferValues;
                             
-                        case 4 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E')
 
                             channelE = bufferValues;
 
-                        case 5 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F')
 
                             channelF = bufferValues;
 
-                        case 6 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G')
 
                             channelG = bufferValues;
 
-                        case 7 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H')
 
                             channelH = bufferValues;
 
@@ -5313,7 +5314,7 @@ info - determines whether the function clears previous conditions:
 direction - the direction of the signal required for the trigger to fire (a PS4000A_DIRECTION enumeration available via ps4000aStruct.tPS4000ADirection) 
 lower - the lower limit of the pulse width counter, in samples.
 upper - the upper limit of the pulse width counter, in samples (only used for in range or out of range scenarios).
-type - the pulse width type (a ps4000aEnuminfo.enPS4000APulseWidthType enumeration).
+type - the pulse width type (an ps4000aEnuminfo.enPS4000APulseWidthType enumeration).
 
 Output parameters:
 
@@ -5346,47 +5347,47 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
     switch(source)
 
         % Channel A
-        case 0 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
             channelRange = channelSettings(1,3);
 
         % Channel B
-        case 1 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
             channelRange = channelSettings(2,3);
 
         % Channel C
-        case 2 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
             channelRange = channelSettings(3,3);
 
         % Channel D
-        case 3 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
             channelRange = channelSettings(4,3);
         
         % Channel E
-        case 4 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
             channelRange = channelSettings(5,3);
 
         % Channel F
-        case 5 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
             channelRange = channelSettings(6,3);
 
         % Channel G
-        case 6 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
             channelRange = channelSettings(7,3);
 
         % Channel H
-        case 7 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
             channelRange = channelSettings(8,3);
             
         % External trigger
-        case 8 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_EXTERNAL
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_EXTERNAL
             
             % External trigger has +/-5V range - no need to change.
 
@@ -5407,7 +5408,7 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
             thresholdADC, direction, deviceObj.DriverData.delay, ...
             deviceObj.DriverData.autoTriggerMs);
         
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
        
         error('setSimpleTrigger: Status code:- %d. Please refer to the PicoStatus.m file.', status);
         
