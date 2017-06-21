@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.5</InstrumentVersion>
+   <InstrumentVersion>1.2.6</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -2499,35 +2499,35 @@ For further information, please also refer to the ps4000aSetChannel function.</D
 
                     switch(ch - 1)
 
-                        case 0 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
                             channelA = bufferValues;
 
-                        case 1 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B
+                        case 1 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
                             channelB = bufferValues;
 
-                        case 2 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C
+                        case 2 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
                             channelC = bufferValues;
 
-                        case 3 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D
+                        case 3 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
                             channelD = bufferValues;
                             
-                        case 4 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E
+                        case 4 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
                             channelE = bufferValues;
 
-                        case 5 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F
+                        case 5 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
                             channelF = bufferValues;
 
-                        case 6 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G
+                        case 6 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
                             channelG = bufferValues;
 
-                        case 7 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H
+                        case 7 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
                             channelH = bufferValues;
 
@@ -3061,35 +3061,35 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                     
                     switch(ch - 1)
 
-                        case 0 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A')
+                        case 0 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A')
 
                             channelA = bufferValues;
 
-                        case 1 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B')
+                        case 1 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B')
 
                             channelB = bufferValues;
 
-                        case 2 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C')
+                        case 2 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C')
 
                             channelC = bufferValues;
 
-                        case 3 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D')
+                        case 3 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D')
 
                             channelD = bufferValues;
                             
-                        case 4 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E')
+                        case 4 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E')
 
                             channelE = bufferValues;
 
-                        case 5 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F')
+                        case 5 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F')
 
                             channelF = bufferValues;
 
-                        case 6 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G')
+                        case 6 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G')
 
                             channelG = bufferValues;
 
-                        case 7 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H')
+                        case 7 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H')
 
                             channelH = bufferValues;
 
@@ -3881,7 +3881,7 @@ For further information on the ps4000aSetSigGenArbitrary function please refer t
 
         startDeltaPhase = 0;
         
-        single =  0; % ps4000aEnuminfo.enPS4000AIndexMode.PS4000A_SINGLE
+        single =  deviceObj.DriverData.enums.enPS4000AIndexMode.PS4000A_SINGLE;
         
         [status, startDeltaPhase] = calllib('ps4000a', 'ps4000aSigGenFrequencyToPhase', ...
                                   deviceObj.DriverData.unitHandle, ...
@@ -4214,7 +4214,7 @@ For further information, please view the Help text for the ps4000aSetSigGenBuilt
     
     offsetVoltage = 0;
     pkToPk = 0;
-    waveTypeDC = 8; % ps4000aEnuminfo.enPS4000AWaveType.PS4000A_DC_VOLTAGE
+    waveTypeDC = deviceObj.DriverData.enums.enPS4000AWaveType.PS4000A_DC_VOLTAGE;
     
     
     status = calllib('ps4000a', 'ps4000aSetSigGenBuiltIn', ...
@@ -4787,12 +4787,12 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
 
     streamingInterval = deviceObj.DriverData.streamingInterval;
     
-    femtosecondsEnum    = 0; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_FS
-    picosecondsEnum     = 1; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_PS
-    nanosecondsEnum     = 2; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_NS
-    microsecondsEnum    = 3; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_US
-    millisecondsEnum    = 4; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_MS
-    secondsEnum         = 5; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_S
+    femtosecondsEnum    = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_FS;
+    picosecondsEnum     = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_PS;
+    nanosecondsEnum     = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_NS;
+    microsecondsEnum    = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_US;
+    millisecondsEnum    = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_MS;
+    secondsEnum         = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_S;
     
     sampleIntervalTimeUnits = secondsEnum;
     
@@ -5336,7 +5336,7 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
     
     % Find the voltage range index
     % Set default as 5V (External trigger will use this range).
-    channelRange = 8; % ps4000aEnuminfo.enPS4000ARange.PS4000A_5V
+    channelRange = deviceObj.DriverData.enums.enPS4000ARange.PS4000A_5V;
 
     % Obtain information for device 
     channelSettings = deviceObj.DriverData.channelSettings;
@@ -5346,47 +5346,47 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
     switch(source)
 
         % Channel A
-        case 0 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A
+        case 0 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
             channelRange = channelSettings(1,3);
 
         % Channel B
-        case 1 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B
+        case 1 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
             channelRange = channelSettings(2,3);
 
         % Channel C
-        case 2 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C
+        case 2 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
             channelRange = channelSettings(3,3);
 
         % Channel D
-        case 3 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D
+        case 3 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
             channelRange = channelSettings(4,3);
         
         % Channel E
-        case 4 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E
+        case 4 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
             channelRange = channelSettings(5,3);
 
         % Channel F
-        case 5 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F
+        case 5 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
             channelRange = channelSettings(6,3);
 
         % Channel G
-        case 6 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G
+        case 6 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
             channelRange = channelSettings(7,3);
 
         % Channel H
-        case 7 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H
+        case 7 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
             channelRange = channelSettings(8,3);
             
         % External trigger
-        case 8 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_EXTERNAL
+        case 8 deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_EXTERNAL
             
             % External trigger has +/-5V range - no need to change.
 
