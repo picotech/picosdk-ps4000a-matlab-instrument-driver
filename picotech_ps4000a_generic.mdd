@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.7</InstrumentVersion>
+   <InstrumentVersion>1.2.8</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -712,11 +712,6 @@
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If bandwidth doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'bandwidth') )
-        obj.DriverData.bandwidth = 0;
-    end
     
     propertyValue = obj.DriverData.bandwidth;
     </GetMCode>
@@ -746,12 +741,8 @@
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If bufferMemory doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'bufferMemory') )
-        obj.DriverData.bufferMemory = 0;
-    else
-        propertyValue = obj.DriverData.bufferMemory;
-    end</GetMCode>
+    propertyValue = obj.DriverData.bufferMemory;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -777,11 +768,6 @@
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If channelCount doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'channelCount') )
-        obj.DriverData.channelCount = [ ];
-    end
 
     propertyValue = obj.DriverData.channelCount;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -813,13 +799,6 @@
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If channelSettings doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'channelSettings') )
-        
-        obj.UserData.channelSettings = [ ];
-        
-    end
-    
     propertyValue = obj.DriverData.channelSettings;
     </GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -870,12 +849,8 @@ analogueOffset - the offset on the channel.
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If firstRange doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'firstRange') )
-        obj.DriverData.firstRange = [ ];
-    else
-        propertyValue = obj.DriverData.firstRange;
-    end</GetMCode>
+    propertyValue = obj.DriverData.firstRange;
+    </GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -917,12 +892,7 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If hasHardwareEts doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'hasHardwareEts') )
-        obj.DriverData.hasHardwareEts = [ ];
-    end
-    
+  
     propertyValue = obj.DriverData.hasHardwareEts;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -985,11 +955,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If lastRange doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'lastRange') )
-        obj.DriverData.lastRange = [ ];
-    end
     
     propertyValue = obj.DriverData.lastRange;
     </GetMCode>
@@ -1034,11 +999,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If maxADCValue doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'maxADCValue') )
-        obj.DriverData.maxADCValue = 0;
-    end
     
     propertyValue = obj.DriverData.maxADCValue;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -1070,11 +1030,6 @@ analogueOffset - the offset on the channel.
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If maxSamplingRate doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'maxSamplingRate') )
-        obj.DriverData.maxSamplingRate = [ ];
-    end
-    
     propertyValue = obj.DriverData.maxSamplingRate;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -1104,11 +1059,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If minADCValue doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'minADCValue') )
-        obj.DriverData.minADCValue = 0;
-    end
     
     propertyValue = obj.DriverData.minADCValue;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -1136,11 +1086,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If numPostTriggerSamples doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'numPostTriggerSamples') )
-        obj.DriverData.numPostTriggerSamples = [ ];
-    end
     
     propertyValue = obj.DriverData.numPostTriggerSamples;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -1180,11 +1125,6 @@ When used in Streaming mode, this is the maximum number of raw samples after a t
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If numPreTriggerSamples doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'numPreTriggerSamples') )
-        obj.DriverData.numPreTriggerSamples = [ ];
-    end
     
     propertyValue = obj.DriverData.numPreTriggerSamples;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -1255,12 +1195,8 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If timebase doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'timebase') )
-        obj.DriverData.timebase = 1;
-    else
-        propertyValue = obj.DriverData.timebase;
-    end</GetMCode>
+    propertyValue = obj.DriverData.timebase;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -1292,12 +1228,8 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If unitHandle doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'unitHandle') )
-        obj.DriverData.unitHandle = 0;
-    else
-        propertyValue = obj.DriverData.unitHandle;
-    end</GetMCode>
+    propertyValue = obj.DriverData.unitHandle;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -1327,12 +1259,8 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If unitSerial doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'unitSerial') )
-        obj.DriverData.unitSerial = [ ];
-    else
-        propertyValue = obj.DriverData.unitSerial;
-    end</GetMCode>
+    propertyValue = obj.DriverData.unitSerial;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -3350,12 +3278,6 @@ For further information on the ps4000aSetNoOfCaptures function please refer to t
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If awgBufferSize doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'awgBufferSize') )
-        deviceObj.DriverData.awgBufferSize = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.awgBufferSize;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3388,12 +3310,6 @@ For further information on the ps4000aSetNoOfCaptures function please refer to t
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If dacFrequency doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'dacFrequency') )
-        deviceObj.DriverData.dacFrequency = 80e6;
-    end
-    
     propertyValue = deviceObj.DriverData.dacFrequency;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3426,12 +3342,6 @@ For further information on the ps4000aSetNoOfCaptures function please refer to t
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If offsetVoltage doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'offsetVoltage') )
-        deviceObj.DriverData.offsetVoltage = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.offsetVoltage;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3468,12 +3378,6 @@ The sum of the offset voltage and peak to peak voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If peakToPeakVoltage doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'peakToPeakVoltage') )
-        deviceObj.DriverData.peakToPeakVoltage = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.peakToPeakVoltage;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3510,12 +3414,6 @@ The sum of the peak to peak voltage and offset voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If sigGenType doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'sigGenType') )
-        deviceObj.DriverData.sigGenType = [ ];
-    end
-    
     propertyValue = deviceObj.DriverData.sigGenType;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3554,12 +3452,6 @@ The sum of the peak to peak voltage and offset voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If startFrequency doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'startFrequency') )
-        deviceObj.DriverData.startFrequency = [ ];
-    end
-    
     propertyValue = deviceObj.DriverData.startFrequency;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3594,12 +3486,6 @@ The sum of the peak to peak voltage and offset voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If stopFrequency doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'stopFrequency') )
-        deviceObj.DriverData.stopFrequency = [ ];
-    end
-    
     propertyValue = deviceObj.DriverData.stopFrequency;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -4488,13 +4374,8 @@ For further information on the ps4000aSetSigGenPropertiesBuiltIn function please
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-    % If autoStop doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'autoStop') )
-        deviceObj.DriverData.autoStop = 0;
-    else
-        propertyValue = deviceObj.DriverData.autoStop;
-    end</GetMCode>
+    propertyValue = deviceObj.DriverData.autoStop;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -4531,12 +4412,6 @@ This flag should be set to 0 (collect streaming data continously) or 1 (stop aft
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-    % If streamingInterval doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'streamingInterval') )
-        deviceObj.DriverData.streamingInterval = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.streamingInterval;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
