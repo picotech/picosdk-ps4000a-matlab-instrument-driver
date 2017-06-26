@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.6</InstrumentVersion>
+   <InstrumentVersion>1.2.7</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -5344,7 +5344,7 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
     
     % Range is item 3 in the row for each channel
 
-    switch(source)
+    switch (source)
 
         % Channel A
         case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
@@ -5486,16 +5486,16 @@ For further information on the underlying ps4000aSetTriggerChannelConditions fun
     
     % Set trigger to false for channel A
     
-    source = 0; % Channel A
+    source = deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A;
     thresholdADC = 0;
-    direction = 0;
+    direction = deviceObj.DriverData.enums.enPS4000AThresholdDirection.PS4000A_RISING;
     
     status = calllib('ps4000a', 'ps4000aSetSimpleTrigger', ...
             deviceObj.DriverData.unitHandle, PicoConstants.FALSE, source, ...
             thresholdADC, direction, deviceObj.DriverData.delay, ...
             deviceObj.DriverData.autoTriggerMs);
     
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
            
         error('setTriggerOff: Status code:- %d. Please refer to the PicoStatus.m file.', status);
         
