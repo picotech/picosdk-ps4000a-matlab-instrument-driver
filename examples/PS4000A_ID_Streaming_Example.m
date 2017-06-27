@@ -89,6 +89,7 @@ connect(ps4000aDeviceObj);
 
 [infoStatus, unitInfo] = invoke(ps4000aDeviceObj, 'getUnitInfo');
 
+disp('Device information:-')
 disp(unitInfo);
 
 %% Channel Setup
