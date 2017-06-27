@@ -77,6 +77,10 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 % Connect device object to hardware.
 connect(ps4000aDeviceObj);
 
+% To suppress output to the Command Window from certain functions, set the
+% |displayOutput| property
+set(ps4000aDeviceObj, 'displayOutput', PicoConstants.FALSE);
+
 %% Set Channels
 
 % Default driver settings applied to channels are listed below - 

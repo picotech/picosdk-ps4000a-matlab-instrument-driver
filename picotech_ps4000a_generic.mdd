@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.8</InstrumentVersion>
+   <InstrumentVersion>1.2.9</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -151,14 +151,19 @@
     
     % PicoScope 4000 Series Models (using the ps4000a driver)
 
-    MODEL_NONE      = 'NONE';
+    obj.DriverData.variants.MODEL_NONE      = 'NONE';
 
     % Variants that can be used
-    MODEL_PS4225   = '4225';
-    MODEL_PS4425   = '4425';
-    MODEL_PS4444   = '4444';
-    MODEL_PS4824   = '4824';
+    obj.DriverData.variants.MODEL_PS4225   = '4225';
+    obj.DriverData.variants.MODEL_PS4425   = '4425';
+    obj.DriverData.variants.MODEL_PS4444   = '4444';
+    obj.DriverData.variants.MODEL_PS4824   = '4824';
     
+    % Obtain flag to indicate if functions should output text to Command
+    % Window
+    % -------------------------------
+    
+    obj.DriverData.displayOutput = obj.displayOutput;
     
     % Enumerate units 
     % ---------------
@@ -298,7 +303,7 @@
         % Set device parameters
         switch(obj.InstrumentModel)
 
-            case PS4000aConstants.MODEL_PS4225
+            case obj.DriverData.variants.MODEL_PS4225
 
                 obj.DriverData.channelCount = PicoConstants.DUAL_SCOPE;
                 obj.DriverData.firstRange = range50mV;
@@ -311,7 +316,7 @@
                 obj.DriverData.resolution = 12.0;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
-            case PS4000aConstants.MODEL_PS4425
+            case obj.DriverData.variants.MODEL_PS4425
 
                 obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
                 obj.DriverData.firstRange = range50mV;
@@ -324,7 +329,7 @@
                 obj.DriverData.resolution = 12.0;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
-            case PS4000aConstants.MODEL_PS4444
+            case obj.DriverData.variants.MODEL_PS4444
 
                 obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
                 obj.DriverData.firstRange = range50mV;
@@ -336,7 +341,7 @@
                 obj.DriverData.hasFlexibleResolution = PicoConstants.TRUE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
                 
-            case PS4000aConstants.MODEL_PS4824
+            case obj.DriverData.variants.MODEL_PS4824
 
                 obj.DriverData.channelCount = PicoConstants.OCTO_SCOPE;
                 obj.DriverData.firstRange = range10mV;
@@ -351,7 +356,7 @@
 
             otherwise
 
-                obj.InstrumentModel = PS4000aConstants.MODEL_NONE; 
+                obj.InstrumentModel = obj.DriverData.variants.MODEL_NONE; 
                 obj.DriverData.channelCount = 0;
                 obj.DriverData.firstRange = range10mV;
                 obj.DriverData.lastRange = range50V;
@@ -835,6 +840,44 @@ dc - set DC/AC coupling.
 range - an enumeration representing the voltage range.
 analogueOffset - the offset on the channel.
 
+</Description>
+            </Property>
+            <Property>
+               <Name>displayOutput</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <GetMCode>function propertyValue = getProperty(obj, propertyName)
+% Return a property value.
+%   This function is called to return the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+
+    propertyValue = obj.DriverData.displayOutput;</GetMCode>
+                  <SetMCode>function set(obj, propertyName, propertyValue)
+% Set a property value.
+%   This function is called to set the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+
+    obj.DriverData.displayOutput = propertyValue;</SetMCode>
+               </Code>
+               <PermissibleType>
+                  <Type>Double</Type>
+                  <Constraint>enum</Constraint>
+                  <ConstraintValue>
+                     <Value>0.0</Value>
+                     <Value>1.0</Value>
+                  </ConstraintValue>
+               </PermissibleType>
+               <DefaultValue>1</DefaultValue>
+               <ReadOnly>never</ReadOnly>
+               <Description>Enumeration value to select whether to display output from function calls in the MATLAB Command Window.
+
+Set to 1 to display output, 0 to hide output.
+
+Note: Output will still be sent to the Command Window when calling the icdevice, connect and disconnect functions. Warning and error messages will still continue to be displayed from function calls.
 </Description>
             </Property>
             <Property>
@@ -2344,7 +2387,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
     deviceObj = get(obj, 'Parent');
     
     % Check ratio mode is not aggregated 
-    if(ratioMode ~= deviceObj.DriverData.enums.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
+    if (ratioMode ~= deviceObj.DriverData.enums.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
             
         unitHandle = deviceObj.DriverData.unitHandle;
         
@@ -2375,13 +2418,17 @@ For further information, please also refer to the ps4000aSetChannel function.</D
         % total number of samples to set for data buffers
         totalSamples = deviceObj.DriverData.numPreTriggerSamples + deviceObj.DriverData.numPostTriggerSamples;
         
-        fprintf('getBlockData: Setting up data buffers...\n');
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+            fprintf('getBlockData: Setting up data buffers...\n');
+            
+        end
         
         for ch = 1:channelCount
 
             % Set Data Buffer if channel is enabled - index 1 indicates if
             % channel is enabled
-            if(channelSettings(ch,1) == PicoConstants.TRUE)
+            if (channelSettings(ch,1) == PicoConstants.TRUE)
                 
                 % Store array of libpointers
                 pBuffer(ch) = libpointer('int16Ptr', zeros(totalSamples, 1, 'int16'));
@@ -2390,7 +2437,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
                     unitHandle, (ch - 1), pBuffer(ch), totalSamples, ...
                     segmentIndex, ratioMode);
                 
-                if(setBufferStatus ~= PicoStatus.PICO_OK)
+                if (setBufferStatus ~= PicoStatus.PICO_OK)
                     
                     error('getBlockData: Set Data Buffer for Channel %d error code %d. Please refer to the PicoStatus.m file.', ...
                         (ch - 1), setBufferStatus);
@@ -2401,16 +2448,24 @@ For further information, please also refer to the ps4000aSetChannel function.</D
 
         end
 
-        fprintf('getBlockData: Retrieving data...\n');
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf('getBlockData: Retrieving data...\n');
+            
+        end
         
         % Call ps4000aGetValues
         [getValuesStatus, numSamples, overflow] = ...
             calllib('ps4000a', 'ps4000aGetValues', unitHandle, startIndex, ...
                 totalSamples, ratio, ratioMode, segmentIndex, overflow);
         
-        if(getValuesStatus == PicoStatus.PICO_OK)
+        if (getValuesStatus == PicoStatus.PICO_OK)
             
-            fprintf('getBlockData: Assigning data to array and converting to millivolts.\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getBlockData: Assigning data to array and converting to millivolts.\n');
+                
+            end
             
             % Obtain max ADC count value
             maxADCValue = double(deviceObj.DriverData.maxADCValue);
@@ -2418,7 +2473,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
             % Retrieve data values for enabled channels
             for ch = 1:channelCount
 
-                if(channelSettings(ch,1) == PicoConstants.TRUE)
+                if (channelSettings(ch,1) == PicoConstants.TRUE)
                     
                     % Obtain the index for the
                     % PicoConstants.SCOPE_INPUT_RANGES array corresponding
@@ -2431,7 +2486,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
                     bufferValues = adc2mv(pBuffer(ch).Value, voltageRange, ...
                         maxADCValue);
 
-                    switch(ch - 1)
+                    switch (ch - 1)
 
                         case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
@@ -2475,7 +2530,11 @@ For further information, please also refer to the ps4000aSetChannel function.</D
                 
             end
             
-            fprintf('getBlockData: Data succesfully retrieved.\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getBlockData: Data succesfully retrieved.\n');
+                
+            end
             
         else
             
@@ -2725,8 +2784,12 @@ For further information on the ps4000aIsReady function please refer to the PicoS
     preTriggerSamples = deviceObj.DriverData.numPreTriggerSamples;
     postTriggerSamples = deviceObj.DriverData.numPostTriggerSamples;
     
-    fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
-        timebaseIndex, preTriggerSamples, postTriggerSamples);
+    if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+        fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
+            timebaseIndex, preTriggerSamples, postTriggerSamples);
+        
+    end
 
     [status, timeIndisposedMs] = calllib('ps4000a', 'ps4000aRunBlock', ...
         unitHandle, preTriggerSamples, postTriggerSamples, ...
@@ -2784,9 +2847,13 @@ For further information on the ps4000aRunBlock function please refer to the Pico
     preTriggerSamples = deviceObj.DriverData.numPreTriggerSamples;
     postTriggerSamples = deviceObj.DriverData.numPostTriggerSamples;
     
-    fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
-        timebaseIndex, preTriggerSamples, postTriggerSamples);
+    if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+        fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
+            timebaseIndex, preTriggerSamples, postTriggerSamples);
 
+    end
+    
     [runBlockStatus, timeIndisposedMs] = calllib('ps4000a', 'ps4000aRunBlock', ...
         unitHandle, preTriggerSamples, postTriggerSamples, ...
         timebaseIndex, timeIndisposedMs, segmentIndex, lpReady, pParameter);
@@ -2797,7 +2864,11 @@ For further information on the ps4000aRunBlock function please refer to the Pico
         
     end
     
-    fprintf('runBlock: Waiting for device to become ready...\n');
+    if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+        fprintf('runBlock: Waiting for device to become ready...\n');
+        
+    end
     
     ready = 0; % Initialise value for pointer
     
@@ -2822,7 +2893,12 @@ For further information on the ps4000aRunBlock function please refer to the Pico
     if(runBlockStatus == PicoStatus.PICO_OK &amp;&amp; readyStatus == PicoStatus.PICO_OK)
         
         status = PicoStatus.PICO_OK;
-        fprintf('runBlock: Device ready.\n\n');
+        
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+            fprintf('runBlock: Device ready.\n\n');
+            
+        end
         
     else
         
@@ -2940,7 +3016,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
 
         end
 
-        fprintf('getRapidBlockData: Retrieving data...\n');
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf('getRapidBlockData: Retrieving data...\n');
+            
+        end
         
         fromSegmentIndex = 0;
         toSegmentIndex = numCaptures - 1;
@@ -2958,7 +3038,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
         
         if(getValuesBulkStatus == PicoStatus.PICO_OK)
             
-            fprintf('getRapidBlockData: Converting to milliVolts and assigning to channel array.\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getRapidBlockData: Converting to millivolts and assigning to channel array.\n');
+                
+            end
             
             % Obtain max ADC count value
             maxADCValue = double(deviceObj.DriverData.maxADCValue);
@@ -2996,35 +3080,35 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                     
                     switch(ch - 1)
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
                             channelA = bufferValues;
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
                             channelB = bufferValues;
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
                             channelC = bufferValues;
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
                             channelD = bufferValues;
                             
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
                             channelE = bufferValues;
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
                             channelF = bufferValues;
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
                             channelG = bufferValues;
 
-                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
                             channelH = bufferValues;
 
@@ -3042,7 +3126,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                 
             end
             
-            fprintf('getRapidBlockData: Data succesfully retrieved.\n\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getRapidBlockData: Data succesfully retrieved.\n\n');
+                
+            end
             
             clear pBuffer;
             
@@ -4767,7 +4855,11 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
     
     if(status == PicoStatus.PICO_OK)
            
-        fprintf('ps4000aRunStreaming:- Sample interval %d', sampleInterval);
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf('ps4000aRunStreaming:- Sample interval %d', sampleInterval);
+            
+        end
         
         switch(sampleIntervalTimeUnits)
        
@@ -4801,7 +4893,11 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
         
         end
         
-        fprintf('%s\n', sampleIntervalTimeUnitsStr);
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf(' %s\n', sampleIntervalTimeUnitsStr);
+            
+        end
         
         clear streamingInterval;
         clear femtosecondsEnum;
@@ -4812,7 +4908,8 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
         clear secondsEnum;
         
     % Check for Power connection
-    elseif(status == PICO_USB3_0_DEVICE_NON_USB3_0_PORT)
+    elseif(status == PicoStatus.PICO_USB3_0_DEVICE_NON_USB3_0_PORT || ...
+            status == PicoStatus.PICO_POWER_SUPPLY_NOT_CONNECTED)
     
         status = invoke(obj, 'ps4000aChangePowerSource', status)
         
