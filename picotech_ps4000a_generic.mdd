@@ -37,6 +37,12 @@
     ps4000aMFile = str2func(strcat('ps4000aMFile_', archStr));
     ps4000aWrapMFile = str2func(strcat('ps4000aWrapMFile_', archStr));
     
+    % ps4000aWrapMFile_archStr.m contains duplicate enumerations and
+    % structures from ps4000aMFile_archStr.m
+    
+    warning('off','MATLAB:loadlibrary:EnumExists');
+    warning('off','MATLAB:loadlibrary:StructTypeExists');
+    
     % Only load library once 
     if (libisloaded('ps4000a'))
        
