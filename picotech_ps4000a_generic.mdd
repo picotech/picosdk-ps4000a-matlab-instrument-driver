@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.9</InstrumentVersion>
+   <InstrumentVersion>1.2.10</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1708,9 +1708,20 @@ For further information on the ps4000aGetMaxSegments function please refer to th
         'ps4000aGetTimebase2', obj.DriverData.unitHandle, timebase, numSamples, ...
         timeIntervalNanoSeconds, maxSamples, segmentIndex);
     
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
+        
+        % Inform the User that an invalid timebase index has been selected
+        if (status == PicoStatus.PICO_INVALID_TIMEBASE)
            
-        error('ps4000aGetTimebase2:- Status code: %d. Please refer to the PicoStatus.m file.', status);
+            warning('PS4000AInstrumentDriver:InvalidTimebase', ['Invalid timebase ', ...
+                'index used in call to ps4000aGetTimebase2().']);
+            
+        else
+            
+            error('PS4000AInstrumentDriver:PS4000aGetTimebase2', ['ps4000aGetTimebase2:- Status code: ', ...
+                '%d. Please refer to the PicoStatus.m file.'], status);
+        
+        end
         
     end
     
