@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.10</InstrumentVersion>
+   <InstrumentVersion>1.2.11</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -502,7 +502,7 @@
         fprintf('Connected to PicoScope 4000 Series device:-\n\n');
         fprintf('      Instrument Model: %s\n', get(obj, 'InstrumentModel'));
         fprintf('   Batch/Serial Number: %s\n', unitSerial);
-        fprintf('     Analogue Channels: %d\n', get(obj, 'channelCount'));
+        fprintf('       Analog Channels: %d\n', get(obj, 'channelCount'));
             
         % Bandwidth information
         bandwidthHz = obj.DriverData.bandwidth;
@@ -796,7 +796,7 @@
                </PermissibleType>
                <DefaultValue>0</DefaultValue>
                <ReadOnly>always</ReadOnly>
-               <Description>The number of analogue input channels on the device.</Description>
+               <Description>The number of analog input channels on the device.</Description>
             </Property>
             <Property>
                <Name>channelSettings</Name>
@@ -824,7 +824,7 @@
                </PermissibleType>
                <DefaultValue/>
                <ReadOnly>always</ReadOnly>
-               <Description>A matrix containing the channel settings for analogue channels.
+               <Description>A matrix containing the channel settings for analog channels.
 
 This will consist of a channelCount x 4 matrix.
 
@@ -2210,7 +2210,7 @@ For further information on the ps4000aStop function please refer to the PicoScop
 This includes the folliowing:
 
 1. Device specific properties.
-2. Enabling all available channels to 5V range, DC coupled with 0 analogue offset.
+2. Enabling all available channels to 5V range, DC coupled with 0 analog offset.
 3. Turning off the trigger:
 
 	- delay is set to 0
@@ -2357,14 +2357,14 @@ None
     clear range5V;
         </MCode>
                </Code>
-               <Description>setChannelDefaults(obj) sets the following default values for any Analogue channels found on the device:
+               <Description>setChannelDefaults(obj) sets the following default values for any analog channels found on the device:
 
-Analogue Channel:
+Analog Channel:
 
-Enabled               : True
-Coupling              : DC
-Voltage Range    : 5V
-Analogue Offset : 0.0V
+Enabled       : True
+Coupling      : DC
+Voltage Range : 5V
+Analog Offset : 0.0V
 
 
 This function may be used with the Test and Measurement Tool.
