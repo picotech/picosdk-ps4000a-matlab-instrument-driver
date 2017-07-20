@@ -154,6 +154,7 @@ while(status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
 
 end
 
+fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
 %% Set Simple Trigger 
