@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.1.28</InstrumentVersion>
+   <InstrumentVersion>1.2.11</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -17,35 +17,50 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright (C) 2014 - 2015. Pico Technology Ltd. All rights reserved. 
+% Copyright © 2014-2017 Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
-    fprintf('\nCopyright (C) 2014 - 2017 Pico Technology Ltd. All rights reserved.\n');
+    fprintf('\nCopyright © 2014-2017 Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
     fprintf('PicoScope 4000 Series (A API) MATLAB Instrument Driver\n');
     fprintf('\n');
 
-    % Load main and wrapper libraries according to OS Platform
+    % Load libraries
+    % ==============
+    
+    % Indentify architecture and obtain function handle for the correct
+    % prototype file.
+    
+    archStr = computer('arch');
+    
+    ps4000aMFile = str2func(strcat('ps4000aMFile_', archStr));
+    ps4000aWrapMFile = str2func(strcat('ps4000aWrapMFile_', archStr));
+    
+    % ps4000aWrapMFile_archStr.m contains duplicate enumerations and
+    % structures from ps4000aMFile_archStr.m
+    
+    warning('off','MATLAB:loadlibrary:EnumExists');
+    warning('off','MATLAB:loadlibrary:StructTypeExists');
     
     % Only load library once 
-    if(libisloaded('ps4000a'))
+    if (libisloaded('ps4000a'))
        
         % Do nothing
         
     else
         
-        if(ispc)
+        if (ismac())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('ps4000a.dll', @ps4000aMFile);
-
-        elseif(ismac)
+            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000a.dylib', ps4000aMFile, 'alias', 'ps4000a');
+        
+        elseif (isunix())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000a.dylib', @ps4000aMFile, 'alias', 'ps4000a');
+            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000a.so', ps4000aMFile, 'alias', 'ps4000a');
             
-        elseif(isunix)
+        elseif (ispc())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000a.so', @ps4000aMFile, 'alias', 'ps4000a');
+            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('ps4000a.dll', ps4000aMFile);
                 
         else
             
@@ -56,24 +71,24 @@
     end
     
     % Only load library once 
-    if(libisloaded('ps4000aWrap'))
+    if (libisloaded('ps4000aWrap'))
 
         % Do nothing
         
     else
         
-        if(ispc)
+        if (ismac())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('ps4000aWrap.dll', @ps4000aWrapMFile);
+            [ps4000aWrapNotFound, ps4000aWrapWarnings] = loadlibrary('libps4000aWrap.dylib', ps4000aWrapMFile, 'alias', 'ps4000aWrap');
+    
+        elseif (isunix())
             
-        elseif(ismac)
-            
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000aWrap.dylib', @ps4000aWrapMFile, 'alias', 'ps4000aWrap');
+            [ps4000aWrapNotFound, ps4000aWrapWarnings] = loadlibrary('libps4000aWrap.so', ps4000aWrapMFile, 'alias', 'ps4000aWrap');
                 
-        elseif(isunix)
+        elseif (ispc())
             
-            [ps4000aNotFound, ps4000aWarnings] = loadlibrary('libps4000aWrap.so', @ps4000aWrapMFile, 'alias', 'ps4000aWrap');
-                
+            [ps4000aWrapNotFound, ps4000aWrapWarnings] = loadlibrary('ps4000aWrap.dll', ps4000aWrapMFile);
+        
         else
             
             % Do nothing
@@ -82,22 +97,84 @@
         
     end
     
+    % Load in enumeration and structure information
+    % =============================================
     
-    % Confirm data files have been loaded
-    if (exist('PicoConstants.m', 'file') == 0)
+    [~, obj.DriverData.structs, obj.DriverData.enums, ~] = ps4000aMFile(); 
     
-        error('File PicoConstants.m not found - please ensure that the location of this file is added to the MATLAB Path.')
+    % Define constant values used by this Instrument Driver
+    % =====================================================
     
-    end
+    % Constants from ps4000aApi.h header file
+    % ---------------------------------------
+    
+    % ADC Count Properties
+        
+    obj.DriverData.constants.PS4000A_MAX_VALUE                  = 32767;    % ADC Counts
+    obj.DriverData.constants.PS4000A_MIN_VALUE                  = -32767;   % ADC Counts
 
-    if (exist('PS4000aConstants.m', 'file') == 0)
+    % External trigger: Max/min counts
+
+    obj.DriverData.constants.PS4000A_EXT_MAX_VALUE              = 32767;    % Counts
+    obj.DriverData.constants.PS4000A_EXT_MIN_VALUE              = -32767;   % Counts
+
+    % Trigger Properties
+
+    obj.DriverData.constants.MAX_PULSE_WIDTH_QUALIFIER_COUNT    = 16777215;
+    obj.DriverData.constants.MAX_DELAY_COUNT                    = 8388607;
+
+    % Analogue offset values (Volts)
+
+    obj.DriverData.constants.PS4000A_MAX_ANALOGUE_OFFSET_50MV_200MV  = 0.250;
+    obj.DriverData.constants.PS4000A_MIN_ANALOGUE_OFFSET_50MV_200MV  = -0.250;
+    obj.DriverData.constants.PS4000A_MAX_ANALOGUE_OFFSET_500MV_2V    = 2.500;
+    obj.DriverData.constants.PS4000A_MIN_ANALOGUE_OFFSET_500MV_2V    = -2.500;
+    obj.DriverData.constants.PS4000A_MAX_ANALOGUE_OFFSET_5V_20V      = 20;
+    obj.DriverData.constants.PS4000A_MIN_ANALOGUE_OFFSET_5V_20V      = -20;
+
+    % Function/Arbitrary Waveform Parameters
+
+    obj.DriverData.constants.PS4000A_MAX_SIG_GEN_BUFFER_SIZE    = 16384;   
+    obj.DriverData.constants.PS4000A_MIN_SIG_GEN_BUFFER_SIZE    = 10;
+    obj.DriverData.constants.PS4000A_MIN_DWELL_COUNT            = 10;
+    obj.DriverData.constants.PS4000A_MAX_SWEEPS_SHOTS           = pow2(30) - 1; % 1073741823
+
+    % Maximum/Minimum Waveform Frequencies (in Hertz)
+
+    obj.DriverData.constants.PS4000A_SINE_MAX_FREQUENCY         = 1000000;
+    obj.DriverData.constants.PS4000A_SQUARE_MAX_FREQUENCY       = 1000000;
+    obj.DriverData.constants.PS4000A_TRIANGLE_MAX_FREQUENCY     = 1000000;
+    obj.DriverData.constants.PS4000A_SINC_MAX_FREQUENCY         = 1000000
+    obj.DriverData.constants.PS4000A_RAMP_MAX_FREQUENCY         = 1000000;
+    obj.DriverData.constants.PS4000A_HALF_SINE_MAX_FREQUENCY	= 1000000;
+    obj.DriverData.constants.PS4000A_GAUSSIAN_MAX_FREQUENCY     = 1000000;
+    obj.DriverData.constants.PS4000A_MIN_FREQUENCY              = 0.03;
+
+    % Maximum number of devices using this driver
+    % -------------------------------------------
     
-        error('File PS4000aConstants.m not found - please ensure that the location of this file is added to the MATLAB Path.')
+    obj.DriverData.constants.PS4000A_MAX_UNITS = 64;
     
-    end
+    % PicoScope 4000 Series Models (using the ps4000a driver)
+
+    obj.DriverData.variants.MODEL_NONE      = 'NONE';
+
+    % Variants that can be used
+    obj.DriverData.variants.MODEL_PS4225   = '4225';
+    obj.DriverData.variants.MODEL_PS4425   = '4425';
+    obj.DriverData.variants.MODEL_PS4444   = '4444';
+    obj.DriverData.variants.MODEL_PS4824   = '4824';
     
-    % Enumerate units - only displayed if driver is being used via command
-    % line
+    % Obtain flag to indicate if functions should output text to Command
+    % Window
+    % -------------------------------
+    
+    obj.DriverData.displayOutput = obj.displayOutput;
+    
+    % Enumerate units 
+    % ---------------
+    
+    % Only displayed if driver is being used via command line
     
     count = int16(0);
     serialLth = int16(100);
@@ -106,11 +183,11 @@
     [status, count, serials, serialLth] = calllib('ps4000a', ...
         'ps4000aEnumerateUnits', count, serials, serialLth);
     
-    if(status == PicoStatus.PICO_OK)
+    if (status == PicoStatus.PICO_OK)
         
         fprintf('Number of units found: %d\n\nSerial number(s): %s\n\n', count, serials);
         
-    elseif(status == PicoStatus.PICO_NOT_FOUND)
+    elseif (status == PicoStatus.PICO_NOT_FOUND)
         
         error('No devices found.');
         
@@ -128,7 +205,7 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright (C) Pico Technology Ltd. 2014 - 2015. All rights reserved. 
+% Copyright (C) 2014-2017 Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified.
 
     disp('Opening PicoScope 4000 Series device...');
@@ -174,8 +251,10 @@
     
     obj.DriverData.channelSettings = zeros(PicoConstants.OCTO_SCOPE, 4);
 
-    % If connected to a non-USB 3.0 port, change the power source
-    if(connectStatus.openUnit == PicoStatus.PICO_USB3_0_DEVICE_NON_USB3_0_PORT) 
+    % If connected to a non-USB 3.0 port or power supply is not connected, 
+    % change the power source
+    if (connectStatus.openUnit == PicoStatus.PICO_USB3_0_DEVICE_NON_USB3_0_PORT || ...
+            connectStatus.openUnit == PicoStatus.PICO_POWER_SUPPLY_NOT_CONNECTED) 
 
         powerStatus = invoke(obj, 'ps4000aChangePowerSource', ...
             connectStatus.openUnit);
@@ -184,14 +263,12 @@
 
     % Set handle and serial 
     % Unit connected if 0 or power supply not connected
-    if(connectStatus.openUnit == picoOK || powerStatus == picoOK)
+    if (connectStatus.openUnit == picoOK || powerStatus == picoOK)
 
         % Display object information
         obj
         
         unitHandle = obj.DriverData.unitHandle;
-        %set(obj, 'unitHandle', obj.DriverData.unitHandle);
-        %fprintf('Handle: %d\n', unit_handle);
 
         infoLine = blanks(40);
         reqSize = 40;
@@ -212,7 +289,211 @@
                 length(infoLineV), reqSizeV, PicoStatus.PICO_VARIANT_INFO);
 
         set(obj, 'InstrumentModel', variant);
+        
+        % Set Device Properties
+        % ---------------------
+        
+        range10mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_10MV;
+        range20mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_20MV;
+        range50mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_50MV;
+        range50V  = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_50V;
+        range200V = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_200V;
+        
+        % Obtain channel count
+        obj.DriverData.channelCount = str2num(obj.InstrumentModel(2));
+        
+        % Inform the wrapper dll of the number of channels on the device
+        status = calllib('ps4000aWrap', 'setChannelCount', obj.DriverData.unitHandle, ...
+                            obj.DriverData.channelCount);
+        
+        % Set device parameters
+        switch(obj.InstrumentModel)
 
+            case obj.DriverData.variants.MODEL_PS4225
+
+                obj.DriverData.channelCount = PicoConstants.DUAL_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.resolution = 12.0;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
+
+            case obj.DriverData.variants.MODEL_PS4425
+
+                obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.resolution = 12.0;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
+
+            case obj.DriverData.variants.MODEL_PS4444
+
+                obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.TRUE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+                
+            case obj.DriverData.variants.MODEL_PS4824
+
+                obj.DriverData.channelCount = PicoConstants.OCTO_SCOPE;
+                obj.DriverData.firstRange = range10mV;
+                obj.DriverData.lastRange = range50V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.resolution = 12.0;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
+
+            otherwise
+
+                obj.InstrumentModel = obj.DriverData.variants.MODEL_NONE; 
+                obj.DriverData.channelCount = 0;
+                obj.DriverData.firstRange = range10mV;
+                obj.DriverData.lastRange = range50V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_ZERO;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_ZERO;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_ZERO;
+                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.resolution = 12.0;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
+
+                error('Unit not supported');
+
+        end
+        
+        % TODO: - register callback function for intelligent probes
+        if (obj.DriverData.hasIntelligentProbeInterface == PicoConstants.TRUE)
+           
+            
+            
+        end
+        
+        % Confirm the device resolution if it has flexible resolution
+        if (obj.DriverData.hasFlexibleResolution == PicoConstants.TRUE)
+            
+            pResolution = libpointer('enPS4000ADeviceResolution', obj.DriverData.enums.enPS4000ADeviceResolution.PS4000A_DR_12BIT);
+                      
+            status = calllib('ps4000a', 'ps4000aGetDeviceResolution', ...
+                obj.DriverData.unitHandle, pResolution);
+            
+            if (status == PicoStatus.PICO_OK)
+                
+                resolutionEnumValue = pResolution.Value;
+                
+                switch (resolutionEnumValue)
+                    
+                    case 'PS4000A_DR_12BIT'
+                        
+                        obj.DriverData.resolution = 12;
+                        
+                    case 'PS4000A_DR_14BIT'
+                        
+                        obj.DriverData.resolution = 14;
+                        
+                    otherwise
+                        
+                       warning('PS4000AIDConnect:ps4000aGetDeviceResolution', ['ps4000aGetDeviceResolution '...
+                           'returned status code %d.'], status.getResolution);
+                        
+                end
+                
+            end
+            
+        end
+        
+        % Find Arbitrary Waveform values - if Arbitrary Waveform Generator
+        % is present, use default values.
+
+        minArbWaveformValue = 0;
+        maxArbWaveformValue = 0;
+        minAWGBufferSize = 0;
+        obj.DriverData.awgBufferSize = PicoConstants.AWG_BUFFER_ZERO;
+
+        [status, minArbWaveformValue, maxArbWaveformValue, minAWGBufferSize, ...
+            obj.DriverData.awgBufferSize] = ...
+            calllib('ps4000a', 'ps4000aSigGenArbitraryMinMaxValues', ...
+            obj.DriverData.unitHandle, minArbWaveformValue, ...
+            maxArbWaveformValue, minAWGBufferSize, obj.DriverData.awgBufferSize);
+
+        if (status == PicoStatus.PICO_OK)
+
+            obj.DriverData.sigGenType = PicoConstants.SIG_GEN_AWG;
+            obj.DriverData.dacFrequency = PicoConstants.AWG_DAC_FREQUENCY_80MHZ;
+
+        else
+
+            obj.DriverData.sigGenType = PicoConstants.SIG_GEN_NONE;
+            obj.DriverData.dacFrequency = PicoConstants.AWG_DAC_FREQUENCY_ZERO;
+
+        end
+        
+        % Set the max. ADC value
+    
+        maxValue = 0;
+
+        [maxValueStatus, obj.DriverData.maxADCValue]  = calllib('ps4000a', ...
+            'ps4000aMaximumValue', obj.DriverData.unitHandle, maxValue);
+
+        clear maxValue;
+        clear maxValueStatus;
+
+        % Set the min. ADC value 
+
+        minValue = 0;
+
+        [minValueStatus, obj.DriverData.minADCValue]  = calllib('ps4000a', ...
+            'ps4000aMinimumValue', obj.DriverData.unitHandle, minValue);
+
+        clear minValue;
+        clear minValueStatus;
+        
+        obj.DriverData.autoTriggerMs = 0;
+        obj.DriverData.delay = 0;
+        
+        % Set the default number of pre-trigger and post-trigger samples
+        obj.DriverData.numPreTriggerSamples = 0;
+
+        obj.DriverData.numPostTriggerSamples = 1000000;
+
+        totalSamples = obj.DriverData.numPreTriggerSamples + obj.DriverData.numPostTriggerSamples;
+
+        % Set the timebase - 1us sampling interval (1MS/s) 
+        obj.DriverData.timebase = 79;
+
+        obj.DriverData.streamingInterval = 1e-6; % 1us -&gt; 1MS/s
+        obj.DriverData.autoStop = PicoConstants.TRUE;
+        
+        obj.DriverData.streamingInterval = 1e-6; % 1us -&gt; 1MS/s
+        obj.DriverData.autoStop = PicoConstants.TRUE;
+
+        if(obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
+            obj.DriverData.sigGenType == PicoConstants.SIG_GEN_AWG)
+       
+            obj.DriverData.startFrequency = 1000;
+            obj.DriverData.stopFrequency = 1000;
+
+            obj.DriverData.offsetVoltage = 0;
+            obj.DriverData.peakToPeakVoltage = 2000;
+       
+        end
+        
         % Set device parameters
         invoke(obj, 'resetDevice');
         
@@ -221,7 +502,7 @@
         fprintf('Connected to PicoScope 4000 Series device:-\n\n');
         fprintf('      Instrument Model: %s\n', get(obj, 'InstrumentModel'));
         fprintf('   Batch/Serial Number: %s\n', unitSerial);
-        fprintf('     Analogue Channels: %d\n', get(obj, 'channelCount'));
+        fprintf('       Analog Channels: %d\n', get(obj, 'channelCount'));
             
         % Bandwidth information
         bandwidthHz = obj.DriverData.bandwidth;
@@ -245,11 +526,11 @@
         % Sampling rate information
         maxSamplingRate = obj.DriverData.maxSamplingRate;
         
-        if(maxSamplingRate &gt; 0 &amp;&amp; maxSamplingRate &lt; 1e9)
+        if (maxSamplingRate &gt; 0 &amp;&amp; maxSamplingRate &lt; 1e9)
             
             fprintf(' Maximum sampling rate: %d MS/s\n', maxSamplingRate/1e6);
             
-        elseif(maxSamplingRate &gt;= 1e9)
+        elseif (maxSamplingRate &gt;= 1e9)
            
             fprintf(' Maximum sampling rate: %d GS/s\n', maxSamplingRate/1e9);
             
@@ -285,7 +566,7 @@
 
         fprintf('\n');
 
-    elseif(connectStatus.openUnit == PicoStatus.PICO_NOT_FOUND)
+    elseif (connectStatus.openUnit == PicoStatus.PICO_NOT_FOUND)
 
         error('No unit found, please check connections.');
 
@@ -302,7 +583,7 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-    if(isfield(obj.DriverData,'unitHandle'))
+    if (isfield(obj.DriverData,'unitHandle'))
 
         unitHandle = obj.DriverData.unitHandle;
     
@@ -311,7 +592,7 @@
             return;
         end
 
-        if(~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
+        if (~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
 
             % If the drivers are no longer loaded, return without doing
             % anything
@@ -323,29 +604,93 @@
 
         disconnectStatus = calllib('ps4000a', 'ps4000aCloseUnit', unitHandle);
 
-        if(disconnectStatus == PicoStatus.PICO_OK)
+        if (disconnectStatus == PicoStatus.PICO_OK)
 
             fprintf(['Connection to PicoScope %s with serial number %s ' ...
                 'closed successfully.\n'], obj.InstrumentModel, obj.DriverData.unitSerial);
 
+        elseif (disconnectStatus == PicoStatus.PICO_INVALID_HANDLE)
+            
+            % No device with the handle, so should be disconnected.
+            return;
+            
         else
+            
+            if (isfield(obj.DriverData, 'unitSerial'))
 
-            error('Disconnect:ConnectionNotClosed',['Connection to PicoScope %s with serial number %s ' ...
-                'not closed. Status code %d\n'], ...
-                obj.InstrumentModel, obj.DriverData.unitSerial, disconnectStatus);
+                error('Disconnect:ConnectionNotClosed',['Connection to PicoScope %s with serial number %s ' ...
+                    'not closed. Status code %d\n'], ...
+                    obj.InstrumentModel, obj.DriverData.unitSerial, disconnectStatus);
+                
+            end
 
         end
 
-        unloadlibrary('ps4000aWrap');
-        unloadlibrary('ps4000a');
+        % Only unload libraries if there are no more connected
+        % oscilloscopes
+        
+        % Find the first handle number for the platform
+        firstHandle = 0;
+        
+        if (ispc())
+            
+            firstHandle = 16384; % Windows PC
+            
+        else 
+           
+            firstHandle = 1; % Mac OS X and Linux
+            
+        end
+        
+        % Test the connection to a range of handle values up to a maximum
+        lastHandle = firstHandle + obj.DriverData.constants.PS4000A_MAX_UNITS - 1;
+        
+        % Create an array to store status values for ping tests.
+        % On Windows PCs, the first handle is 16384 so this will need to be
+        % accounted for.
+        if (ispc())
+            
+            pingStatus = zeros(lastHandle, 1);
+            
+        else
+            
+            pingStatus = zeros(obj.DriverData.constants.PS4000A_MAX_UNITS, 1);
+            
+        end
+        
+        % Test the handle value ranges
+        for h = firstHandle:lastHandle
 
-        if (~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
-
-            disp('Libraries unloaded successfully.');
-
+            pingStatus(h, 1) = calllib('ps4000a', 'ps4000aPingUnit', h);
+            
+        end
+        
+        if (ispc())
+                
+            % Need to resize arrray as first handle is not 0
+            pingStatus(1:firstHandle - 1) = [];
+                
+        end
+        
+        if (any(pingStatus == PicoStatus.PICO_OK))
+         
+          % Device still connected
+          disp('Other PicoScope 4000 Series devices using the ps4000a shared library are still connected - libraries will not be unloaded.');
+          
         else
 
-            error('Libraries not unloaded successfully.');
+            unloadlibrary('ps4000aWrap');
+            unloadlibrary('ps4000a');
+            
+            if (~libisloaded('ps4000a') &amp;&amp; ~libisloaded('ps4000aWrap'))
+
+                disp('Libraries unloaded successfully.');
+
+            else
+
+                error('Libraries not unloaded.');
+
+            end
 
         end
         
@@ -378,11 +723,6 @@
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If bandwidth doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'bandwidth') )
-        obj.DriverData.bandwidth = 0;
-    end
     
     propertyValue = obj.DriverData.bandwidth;
     </GetMCode>
@@ -412,12 +752,8 @@
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If bufferMemory doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'bufferMemory') )
-        obj.DriverData.bufferMemory = 0;
-    else
-        propertyValue = obj.DriverData.bufferMemory;
-    end</GetMCode>
+    propertyValue = obj.DriverData.bufferMemory;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -444,11 +780,6 @@
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If channelCount doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'channelCount') )
-        obj.DriverData.channelCount = [ ];
-    end
-
     propertyValue = obj.DriverData.channelCount;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -465,7 +796,7 @@
                </PermissibleType>
                <DefaultValue>0</DefaultValue>
                <ReadOnly>always</ReadOnly>
-               <Description>The number of analogue input channels on the device.</Description>
+               <Description>The number of analog input channels on the device.</Description>
             </Property>
             <Property>
                <Name>channelSettings</Name>
@@ -479,13 +810,6 @@
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If channelSettings doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'channelSettings') )
-        
-        obj.UserData.channelSettings = [ ];
-        
-    end
-    
     propertyValue = obj.DriverData.channelSettings;
     </GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -500,7 +824,7 @@
                </PermissibleType>
                <DefaultValue/>
                <ReadOnly>always</ReadOnly>
-               <Description>A matrix containing the channel settings for analogue channels.
+               <Description>A matrix containing the channel settings for analog channels.
 
 This will consist of a channelCount x 4 matrix.
 
@@ -525,6 +849,44 @@ analogueOffset - the offset on the channel.
 </Description>
             </Property>
             <Property>
+               <Name>displayOutput</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <GetMCode>function propertyValue = getProperty(obj, propertyName)
+% Return a property value.
+%   This function is called to return the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+
+    propertyValue = obj.DriverData.displayOutput;</GetMCode>
+                  <SetMCode>function set(obj, propertyName, propertyValue)
+% Set a property value.
+%   This function is called to set the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+
+    obj.DriverData.displayOutput = propertyValue;</SetMCode>
+               </Code>
+               <PermissibleType>
+                  <Type>Double</Type>
+                  <Constraint>enum</Constraint>
+                  <ConstraintValue>
+                     <Value>0.0</Value>
+                     <Value>1.0</Value>
+                  </ConstraintValue>
+               </PermissibleType>
+               <DefaultValue>1</DefaultValue>
+               <ReadOnly>never</ReadOnly>
+               <Description>Enumeration value to select whether to display output from function calls in the MATLAB Command Window.
+
+Set to 1 to display output, 0 to hide output.
+
+Note: Output will still be sent to the Command Window when calling the icdevice, connect and disconnect functions. Warning and error messages will still continue to be displayed from function calls.
+</Description>
+            </Property>
+            <Property>
                <Name>firstRange</Name>
                <Location>parent</Location>
                <CapabilityGroup>Base</CapabilityGroup>
@@ -536,12 +898,8 @@ analogueOffset - the offset on the channel.
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If firstRange doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'firstRange') )
-        obj.DriverData.firstRange = [ ];
-    else
-        propertyValue = obj.DriverData.firstRange;
-    end</GetMCode>
+    propertyValue = obj.DriverData.firstRange;
+    </GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -583,12 +941,7 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If hasHardwareEts doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'hasHardwareEts') )
-        obj.DriverData.hasHardwareEts = [ ];
-    end
-    
+  
     propertyValue = obj.DriverData.hasHardwareEts;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -609,6 +962,38 @@ analogueOffset - the offset on the channel.
                <Description>Indicates if the device has hardware-based Equivalent Time Sampling.</Description>
             </Property>
             <Property>
+               <Name>hasIntelligentProbeInterface</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <GetMCode>function propertyValue = getProperty(obj, propertyName)
+% Return a property value.
+%   This function is called to return the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+    
+    propertyValue = obj.DriverData.hasIntelligentProbeInterface;</GetMCode>
+                  <SetMCode>function set(obj, propertyName, propertyValue)
+% Set a property value.
+%   This function is called to set the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+</SetMCode>
+               </Code>
+               <PermissibleType>
+                  <Type>Double</Type>
+                  <Constraint>enum</Constraint>
+                  <ConstraintValue>
+                     <Value>0.0</Value>
+                     <Value>1.0</Value>
+                  </ConstraintValue>
+               </PermissibleType>
+               <DefaultValue>0</DefaultValue>
+               <ReadOnly>never</ReadOnly>
+               <Description>Specifies whether the PicoScope model has an intelligent probe interface for use with PicoConnect (TM) probes.</Description>
+            </Property>
+            <Property>
                <Name>lastRange</Name>
                <Location>parent</Location>
                <CapabilityGroup>Base</CapabilityGroup>
@@ -619,11 +1004,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If lastRange doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'lastRange') )
-        obj.DriverData.lastRange = [ ];
-    end
     
     propertyValue = obj.DriverData.lastRange;
     </GetMCode>
@@ -668,11 +1048,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If maxADCValue doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'maxADCValue') )
-        obj.DriverData.maxADCValue = 0;
-    end
     
     propertyValue = obj.DriverData.maxADCValue;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -704,11 +1079,6 @@ analogueOffset - the offset on the channel.
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If maxSamplingRate doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'maxSamplingRate') )
-        obj.DriverData.maxSamplingRate = [ ];
-    end
-    
     propertyValue = obj.DriverData.maxSamplingRate;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -738,11 +1108,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If minADCValue doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'minADCValue') )
-        obj.DriverData.minADCValue = 0;
-    end
     
     propertyValue = obj.DriverData.minADCValue;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -770,11 +1135,6 @@ analogueOffset - the offset on the channel.
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If numPostTriggerSamples doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'numPostTriggerSamples') )
-        obj.DriverData.numPostTriggerSamples = [ ];
-    end
     
     propertyValue = obj.DriverData.numPostTriggerSamples;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -814,11 +1174,6 @@ When used in Streaming mode, this is the maximum number of raw samples after a t
 %   This function is called to return the device or group object property
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
-
-    % If numPreTriggerSamples doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'numPreTriggerSamples') )
-        obj.DriverData.numPreTriggerSamples = [ ];
-    end
     
     propertyValue = obj.DriverData.numPreTriggerSamples;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
@@ -846,6 +1201,38 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 </Description>
             </Property>
             <Property>
+               <Name>resolution</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <GetMCode>function propertyValue = getProperty(obj, propertyName)
+% Return a property value.
+%   This function is called to return the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+
+    propertyValue = obj.DriverData.resolution;</GetMCode>
+                  <SetMCode>function set(obj, propertyName, propertyValue)
+% Set a property value.
+%   This function is called to set the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+</SetMCode>
+               </Code>
+               <PermissibleType>
+                  <Type>Double</Type>
+                  <Constraint>enum</Constraint>
+                  <ConstraintValue>
+                     <Value>12.0</Value>
+                     <Value>14.0</Value>
+                  </ConstraintValue>
+               </PermissibleType>
+               <DefaultValue>12.0</DefaultValue>
+               <ReadOnly>never</ReadOnly>
+               <Description>The resolution of the device, in bits.</Description>
+            </Property>
+            <Property>
                <Name>timebase</Name>
                <Location>parent</Location>
                <CapabilityGroup>Base</CapabilityGroup>
@@ -857,12 +1244,8 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If timebase doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'timebase') )
-        obj.DriverData.timebase = 1;
-    else
-        propertyValue = obj.DriverData.timebase;
-    end</GetMCode>
+    propertyValue = obj.DriverData.timebase;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -894,12 +1277,8 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If unitHandle doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'unitHandle') )
-        obj.DriverData.unitHandle = 0;
-    else
-        propertyValue = obj.DriverData.unitHandle;
-    end</GetMCode>
+    propertyValue = obj.DriverData.unitHandle;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -929,12 +1308,8 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 %   value. If the property is a group property, OBJ is the group object. If
 %   the property is a base device property, OBJ is the device object.
 
-    % If unitSerial doesn't exist, create it.
-    if ( ~isfield(obj.DriverData, 'unitSerial') )
-        obj.DriverData.unitSerial = [ ];
-    else
-        propertyValue = obj.DriverData.unitSerial;
-    end</GetMCode>
+    propertyValue = obj.DriverData.unitSerial;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -951,6 +1326,22 @@ When used in Streaming mode, this is the maximum number of raw samples before th
             </Property>
          </PropertyInfo>
          <MethodInfo>
+            <Method>
+               <Name>deviceReset</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <MCode>function deviceReset(obj)
+% For group functions, OBJ is the group object. For
+% base device functions, OBJ is the device object.
+
+    % Show warning message
+    warning('PS4000AInstrumentDriver:DeviceResetNotSupported', ...
+        'devicereset is not supported by this Instrument Driver - please use the resetDevice function instead.');</MCode>
+               </Code>
+               <Description>The devicereset function is not supported by this Instrument Driver. Please use the resetDevice function instead.</Description>
+            </Method>
             <Method>
                <Name>getUnitInfo</Name>
                <Location>parent</Location>
@@ -1185,7 +1576,7 @@ For further information on the ps4000aGetAnalogueOffset function please refer to
 % base device functions, OBJ is the device object.
 
     % Current info supported is PS4000A_CI_RANGES
-    info = 0; %ps4000aEnuminfo.enPS4000AChannelInfo.PS4000A_CI_RANGES
+    info = obj.DriverData.enums.enPS4000AChannelInfo.PS4000A_CI_RANGES;
     probe = 0;
     ranges = zeros(10, 1);
     length = 0;
@@ -1323,9 +1714,20 @@ For further information on the ps4000aGetMaxSegments function please refer to th
         'ps4000aGetTimebase2', obj.DriverData.unitHandle, timebase, numSamples, ...
         timeIntervalNanoSeconds, maxSamples, segmentIndex);
     
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
+        
+        % Inform the User that an invalid timebase index has been selected
+        if (status == PicoStatus.PICO_INVALID_TIMEBASE)
            
-        error('ps4000aGetTimebase2:- Status code: %d. Please refer to the PicoStatus.m file.', status);
+            warning('PS4000AInstrumentDriver:InvalidTimebase', ['Invalid timebase ', ...
+                'index used in call to ps4000aGetTimebase2().']);
+            
+        else
+            
+            error('PS4000AInstrumentDriver:PS4000aGetTimebase2', ['ps4000aGetTimebase2:- Status code: ', ...
+                '%d. Please refer to the PicoStatus.m file.'], status);
+        
+        end
         
     end
     
@@ -1434,29 +1836,35 @@ For further information on the ps4000aMemorySegments function please refer to th
 % If this is a group function, OBJ is the group object. If
 % it a base device function, OBJ is the device object.
   
-    error('ps4000aSetBandwidthFilter:- This function is not currently supported.');
-    
     % Check if channel between 0 (Channel A) and channel count - 1
-    % if(channel &lt; 0 || channel &gt;= obj.DriverData.channelCount)
-% 
-%         error('ps4000aSetBandwidthFilter: Invalid channel number (should be 0 (A) to 3 (D)');    
-% 
-%     end
-% 
-%     if(bandwidth ~= 0 &amp;&amp; bandwidth ~= 1)
-% 
-%         error('ps4000aSetBandwidthFilter: bandwidth must be 0 (Full) or 1 (20kHz).')
-% 
-%     end
-% 
-%     status = calllib('ps4000a', 'ps4000aSetBandwidthFilter', ...
-%             obj.DriverData.unitHandle, channel, bandwidth);
-% 
-%     if(status ~= PicoStatus.PICO_OK)
-% 
-%         error('ps4000aSetBandwidthFilter: error code %d\n', status);
-% 
-%     end
+    if (channel &lt; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A || channel &gt;= obj.DriverData.channelCount)
+ 
+         error('ps4000aSetBandwidthFilter:InvalidChannel', 'Invalid channel number (should be 0 (A) to 3 (D)');    
+ 
+    end
+ 
+    status = calllib('ps4000a', 'ps4000aSetBandwidthFilter', ...
+                obj.DriverData.unitHandle, channel, bandwidth);
+ 
+    if (status ~= PicoStatus.PICO_OK)
+ 
+        if (status == PicoStatus.PICO_NOT_USED)
+            
+            warning('ps4000aSetBandwidthFilter:NotSupportedByDevice', ['Device does not '...
+                'have bandwidth limiter. No setting has been applied.');
+            
+        elseif (status == PicoStatus.PICO_INVALID_BANDWIDTH)
+            
+            warning('ps4000aSetBandwidthFilter:InvalidBandwidth', ['Invalid bandwidth selected. ', ...
+                'Please check and try again');
+            
+        else
+            
+            error('ps4000aSetBandwidthFilter:OtherError', 'ps4000aSetBandwidthFilter - error code %d\n', status);
+            
+        end
+ 
+    end
 
 
 
@@ -1709,116 +2117,18 @@ For further information on the ps4000aStop function please refer to the PicoScop
 
     fprintf('Setting Device Parameters...\n\n');
     
-    range10mV = 0;  % ps4000aEnuminfo.enPS4000ARange.PS4000A_10MV
-    range20mV = 1;  % ps4000aEnuminfo.enPS4000ARange.PS4000A_20MV
-    range50mV = 2;  % ps4000aEnuminfo.enPS4000ARange.PS4000A_50MV
-    range50V  = 11; % ps4000aEnuminfo.enPS4000ARange.PS4000A_50V
-    range200V = 13; % ps4000aEnuminfo.enPS4000ARange.PS4000A_200V
-    
-    % Set device parameters
-    switch(obj.InstrumentModel)
-        
-            case PS4000aConstants.MODEL_PS4225
-                
-                obj.DriverData.channelCount = PicoConstants.DUAL_SCOPE;
-                obj.DriverData.firstRange = range50mV;
-                obj.DriverData.lastRange = range200V;
-                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
-                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
-                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
-                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
-                
-            case PS4000aConstants.MODEL_PS4425
-                
-                obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
-                obj.DriverData.firstRange = range50mV;
-                obj.DriverData.lastRange = range200V;
-                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
-                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
-                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
-                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
-                
-            case PS4000aConstants.MODEL_PS4824
-                
-                obj.DriverData.channelCount = PicoConstants.OCTO_SCOPE;
-                obj.DriverData.firstRange = range10mV;
-                obj.DriverData.lastRange = range50V;
-                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
-                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
-                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
-                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
-
-            otherwise
-
-                obj.InstrumentModel = PS4000aConstants.MODEL_NONE; 
-                obj.DriverData.channelCount = 0;
-                obj.DriverData.firstRange = range10mV;
-                obj.DriverData.lastRange = range50V;
-                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
-                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_ZERO;
-                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_ZERO;
-                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_ZERO;
-                
-                error('Unit not supported');
-
-    end
-
-    % Find Arbitrary Waveform values - if Arbitrary Waveform Generator
-    % is present, use default values.
-    
-    minArbWaveformValue = 0;
-    maxArbWaveformValue = 0;
-    minAWGBufferSize = 0;
-    obj.DriverData.awgBufferSize = PicoConstants.AWG_BUFFER_ZERO;
-    
-    [status, minArbWaveformValue, maxArbWaveformValue, minAWGBufferSize, ...
-        obj.DriverData.awgBufferSize] = ...
-        calllib('ps4000a', 'ps4000aSigGenArbitraryMinMaxValues', ...
-        obj.DriverData.unitHandle, minArbWaveformValue, ...
-        maxArbWaveformValue, minAWGBufferSize, obj.DriverData.awgBufferSize);
-    
-    if(status == PicoStatus.PICO_OK)
-        
-        obj.DriverData.sigGenType = PicoConstants.SIG_GEN_AWG;
-        obj.DriverData.dacFrequency = PicoConstants.AWG_DAC_FREQUENCY_80MHZ;
-        
-    else
-        
-        obj.DriverData.sigGenType = PicoConstants.SIG_GEN_NONE;
-        obj.DriverData.dacFrequency = PicoConstants.AWG_DAC_FREQUENCY_ZERO;
-        
-    end
-                                
-    % Inform the wrapper dll of the number of channels on the device
-    status = calllib('ps4000aWrap', 'setChannelCount', obj.DriverData.unitHandle, ...
-        obj.DriverData.channelCount);
-    
-    % Set the max. ADC value
-    
-    maxValue = 0;
-
-    [maxValueStatus, obj.DriverData.maxADCValue]  = calllib('ps4000a', ...
-        'ps4000aMaximumValue', obj.DriverData.unitHandle, maxValue);
-    
-    clear maxValue;
-    clear maxValueStatus;
-    
-    % Set the min. ADC value 
-    
-    minValue = 0;
-
-    [minValueStatus, obj.DriverData.minADCValue]  = calllib('ps4000a', ...
-        'ps4000aMinimumValue', obj.DriverData.unitHandle, minValue);
-    
-    clear minValue;
-    clear minValueStatus;
+    range10mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_10MV;
+    range20mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_20MV;
+    range50mV = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_50MV;
+    range50V  = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_50V;
+    range200V = obj.DriverData.enums.enPicoConnectProbeRange.PICO_X1_PROBE_200V;
     
     % Reset Channels
     [status] = invoke(obj, 'setChannelDefaults');
 
     % Turn off ETS
     
-    %disp('Turning off Equivalent Time Sampling...');
+    % disp('Turning off Equivalent Time Sampling...');
     
     %[etsStatus, stPs] = invoke(obj, 'ps4000aSetEts', 0, 0, 0);
 
@@ -1873,7 +2183,7 @@ For further information on the ps4000aStop function please refer to the PicoScop
     
     fprintf('\n');
     
-    if(obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
+    if (obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
             obj.DriverData.sigGenType == PicoConstants.SIG_GEN_AWG)
        
         fprintf('Default Signal generator parameters:-\n\n');
@@ -1900,7 +2210,7 @@ For further information on the ps4000aStop function please refer to the PicoScop
 This includes the folliowing:
 
 1. Device specific properties.
-2. Enabling all available channels to 5V range, DC coupled with 0 analogue offset.
+2. Enabling all available channels to 5V range, DC coupled with 0 analog offset.
 3. Turning off the trigger:
 
 	- delay is set to 0
@@ -1954,14 +2264,14 @@ None
     fprintf('Default Channel Setup:-\n');
     fprintf('-----------------------\n\n');
 
-    chA = 0; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A
-    chB = 1; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B
-    chC = 2; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C
-    chD = 3; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D
-    chE = 4; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E
-    chF = 5; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F
-    chG = 6; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G
-    chH = 7; % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H
+    chA = 0; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A;
+    chB = 1; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B;
+    chC = 2; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C;
+    chD = 3; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D;
+    chE = 4; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E;
+    chF = 5; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F;
+    chG = 6; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G;
+    chH = 7; obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H;
 
     channelCount = obj.DriverData.channelCount;
     
@@ -1970,7 +2280,7 @@ None
     % Assign values used repeatedly to local variable
 
     true = PicoConstants.TRUE;
-    range5V = 8; % ps4000aEnuminfo.enPS4000ARange.PS4000A_5V
+    range5V = obj.DriverData.enums.enPS4000ARange.PS4000A_5V;
     analogueOffset = 0.0;
     
     % Matrix of values to represent channels (rows) x properties (cols)
@@ -2000,35 +2310,35 @@ None
     obj.DriverData.channelSettings = chSettings;
     
     status(1) = invoke(obj, 'ps4000aSetChannel', chA, true, true, range5V, analogueOffset);
-    fprintf('Channel A:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+    fprintf('Channel A:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
     status(2) = invoke(obj, 'ps4000aSetChannel', chB, true, true, range5V, analogueOffset);
-    fprintf('Channel B:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+    fprintf('Channel B:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
     if(obj.DriverData.channelCount == PicoConstants.QUAD_SCOPE || ...
             obj.DriverData.channelCount == PicoConstants.OCTO_SCOPE)
         
         status(3) = invoke(obj, 'ps4000aSetChannel', chC, true, true, range5V, analogueOffset);
-        fprintf('Channel C:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel C:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(4) = invoke(obj, 'ps4000aSetChannel', chD, true, true, range5V, analogueOffset);
-        fprintf('Channel D:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel D:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
     end
     
     if(obj.DriverData.channelCount == PicoConstants.OCTO_SCOPE)
         
         status(5) = invoke(obj, 'ps4000aSetChannel', chE, true, true, range5V, analogueOffset);
-        fprintf('Channel E:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel E:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(6) = invoke(obj, 'ps4000aSetChannel', chF, true, true, range5V, analogueOffset);
-        fprintf('Channel F:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel F:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(7) = invoke(obj, 'ps4000aSetChannel', chG, true, true, range5V, analogueOffset);
-        fprintf('Channel G:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel G:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
 
         status(8) = invoke(obj, 'ps4000aSetChannel', chH, true, true, range5V, analogueOffset);
-        fprintf('Channel H:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalogue Offset: 0.0V\n\n');
+        fprintf('Channel H:-\n\tEnabled: True\n\tCoupling: DC\n\tRange: 5V\n\tAnalog Offset: 0.0V\n\n');
        
     end
     
@@ -2047,14 +2357,14 @@ None
     clear range5V;
         </MCode>
                </Code>
-               <Description>setChannelDefaults(obj) sets the following default values for any Analogue channels found on the device:
+               <Description>setChannelDefaults(obj) sets the following default values for any analog channels found on the device:
 
-Analogue Channel:
+Analog Channel:
 
-Enabled               : True
-Coupling              : DC
-Voltage Range    : 5V
-Analogue Offset : 0.0V
+Enabled       : True
+Coupling      : DC
+Voltage Range : 5V
+Analog Offset : 0.0V
 
 
 This function may be used with the Test and Measurement Tool.
@@ -2091,10 +2401,11 @@ For further information, please also refer to the ps4000aSetChannel function.</D
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
-    % Check ratio mode is not aggregated (ps4000aEnuminfo.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
-    if(ratioMode ~= 1)
-        
-        deviceObj = get(obj, 'Parent');
+    deviceObj = get(obj, 'Parent');
+    
+    % Check ratio mode is not aggregated 
+    if (ratioMode ~= deviceObj.DriverData.enums.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
+            
         unitHandle = deviceObj.DriverData.unitHandle;
         
         channelCount = deviceObj.DriverData.channelCount;
@@ -2124,13 +2435,17 @@ For further information, please also refer to the ps4000aSetChannel function.</D
         % total number of samples to set for data buffers
         totalSamples = deviceObj.DriverData.numPreTriggerSamples + deviceObj.DriverData.numPostTriggerSamples;
         
-        fprintf('getBlockData: Setting up data buffers...\n');
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+            fprintf('getBlockData: Setting up data buffers...\n');
+            
+        end
         
         for ch = 1:channelCount
 
             % Set Data Buffer if channel is enabled - index 1 indicates if
             % channel is enabled
-            if(channelSettings(ch,1) == PicoConstants.TRUE)
+            if (channelSettings(ch,1) == PicoConstants.TRUE)
                 
                 % Store array of libpointers
                 pBuffer(ch) = libpointer('int16Ptr', zeros(totalSamples, 1, 'int16'));
@@ -2139,7 +2454,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
                     unitHandle, (ch - 1), pBuffer(ch), totalSamples, ...
                     segmentIndex, ratioMode);
                 
-                if(setBufferStatus ~= PicoStatus.PICO_OK)
+                if (setBufferStatus ~= PicoStatus.PICO_OK)
                     
                     error('getBlockData: Set Data Buffer for Channel %d error code %d. Please refer to the PicoStatus.m file.', ...
                         (ch - 1), setBufferStatus);
@@ -2150,16 +2465,24 @@ For further information, please also refer to the ps4000aSetChannel function.</D
 
         end
 
-        fprintf('getBlockData: Retrieving data...\n');
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf('getBlockData: Retrieving data...\n');
+            
+        end
         
         % Call ps4000aGetValues
         [getValuesStatus, numSamples, overflow] = ...
             calllib('ps4000a', 'ps4000aGetValues', unitHandle, startIndex, ...
                 totalSamples, ratio, ratioMode, segmentIndex, overflow);
         
-        if(getValuesStatus == PicoStatus.PICO_OK)
+        if (getValuesStatus == PicoStatus.PICO_OK)
             
-            fprintf('getBlockData: Assigning data to array and converting to millivolts.\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getBlockData: Assigning data to array and converting to millivolts.\n');
+                
+            end
             
             % Obtain max ADC count value
             maxADCValue = double(deviceObj.DriverData.maxADCValue);
@@ -2167,7 +2490,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
             % Retrieve data values for enabled channels
             for ch = 1:channelCount
 
-                if(channelSettings(ch,1) == PicoConstants.TRUE)
+                if (channelSettings(ch,1) == PicoConstants.TRUE)
                     
                     % Obtain the index for the
                     % PicoConstants.SCOPE_INPUT_RANGES array corresponding
@@ -2180,37 +2503,37 @@ For further information, please also refer to the ps4000aSetChannel function.</D
                     bufferValues = adc2mv(pBuffer(ch).Value, voltageRange, ...
                         maxADCValue);
 
-                    switch(ch - 1)
+                    switch (ch - 1)
 
-                        case 0 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
                             channelA = bufferValues;
 
-                        case 1 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
                             channelB = bufferValues;
 
-                        case 2 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
                             channelC = bufferValues;
 
-                        case 3 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
                             channelD = bufferValues;
                             
-                        case 4 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
                             channelE = bufferValues;
 
-                        case 5 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
                             channelF = bufferValues;
 
-                        case 6 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
                             channelG = bufferValues;
 
-                        case 7 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
                             channelH = bufferValues;
 
@@ -2224,7 +2547,11 @@ For further information, please also refer to the ps4000aSetChannel function.</D
                 
             end
             
-            fprintf('getBlockData: Data succesfully retrieved.\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getBlockData: Data succesfully retrieved.\n');
+                
+            end
             
         else
             
@@ -2474,8 +2801,12 @@ For further information on the ps4000aIsReady function please refer to the PicoS
     preTriggerSamples = deviceObj.DriverData.numPreTriggerSamples;
     postTriggerSamples = deviceObj.DriverData.numPostTriggerSamples;
     
-    fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
-        timebaseIndex, preTriggerSamples, postTriggerSamples);
+    if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+        fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
+            timebaseIndex, preTriggerSamples, postTriggerSamples);
+        
+    end
 
     [status, timeIndisposedMs] = calllib('ps4000a', 'ps4000aRunBlock', ...
         unitHandle, preTriggerSamples, postTriggerSamples, ...
@@ -2533,9 +2864,13 @@ For further information on the ps4000aRunBlock function please refer to the Pico
     preTriggerSamples = deviceObj.DriverData.numPreTriggerSamples;
     postTriggerSamples = deviceObj.DriverData.numPostTriggerSamples;
     
-    fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
-        timebaseIndex, preTriggerSamples, postTriggerSamples);
+    if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+        fprintf('runBlock:- Collecting block of data:\n\tTimebase: %u\n\tPre-trigger samples: %u\n\tPost-trigger samples: %u\n', ...
+            timebaseIndex, preTriggerSamples, postTriggerSamples);
 
+    end
+    
     [runBlockStatus, timeIndisposedMs] = calllib('ps4000a', 'ps4000aRunBlock', ...
         unitHandle, preTriggerSamples, postTriggerSamples, ...
         timebaseIndex, timeIndisposedMs, segmentIndex, lpReady, pParameter);
@@ -2546,7 +2881,11 @@ For further information on the ps4000aRunBlock function please refer to the Pico
         
     end
     
-    fprintf('runBlock: Waiting for device to become ready...\n');
+    if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+        fprintf('runBlock: Waiting for device to become ready...\n');
+        
+    end
     
     ready = 0; % Initialise value for pointer
     
@@ -2571,7 +2910,12 @@ For further information on the ps4000aRunBlock function please refer to the Pico
     if(runBlockStatus == PicoStatus.PICO_OK &amp;&amp; readyStatus == PicoStatus.PICO_OK)
         
         status = PicoStatus.PICO_OK;
-        fprintf('runBlock: Device ready.\n\n');
+        
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+        
+            fprintf('runBlock: Device ready.\n\n');
+            
+        end
         
     else
         
@@ -2629,10 +2973,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
-    % Check ratio mode is not aggregated (ps4000aEnuminfo.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
-    if(ratioMode ~= 1)
+    deviceObj = get(obj, 'Parent');
+    
+    % Check ratio mode is not aggregated
+    if (ratioMode ~= deviceObj.DriverData.enums.enPS4000ARatioMode.PS4000A_RATIO_MODE_AGGREGATE)
         
-        deviceObj = get(obj, 'Parent');
         unitHandle = deviceObj.DriverData.unitHandle;
         
         channelCount = deviceObj.DriverData.channelCount;
@@ -2688,7 +3033,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
 
         end
 
-        fprintf('getRapidBlockData: Retrieving data...\n');
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf('getRapidBlockData: Retrieving data...\n');
+            
+        end
         
         fromSegmentIndex = 0;
         toSegmentIndex = numCaptures - 1;
@@ -2706,7 +3055,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
         
         if(getValuesBulkStatus == PicoStatus.PICO_OK)
             
-            fprintf('getRapidBlockData: Converting to milliVolts and assigning to channel array.\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getRapidBlockData: Converting to millivolts and assigning to channel array.\n');
+                
+            end
             
             % Obtain max ADC count value
             maxADCValue = double(deviceObj.DriverData.maxADCValue);
@@ -2744,35 +3097,35 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                     
                     switch(ch - 1)
 
-                        case 0 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
                             channelA = bufferValues;
 
-                        case 1 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
                             channelB = bufferValues;
 
-                        case 2 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
                             channelC = bufferValues;
 
-                        case 3 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
                             channelD = bufferValues;
                             
-                        case 4 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
                             channelE = bufferValues;
 
-                        case 5 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
                             channelF = bufferValues;
 
-                        case 6 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
                             channelG = bufferValues;
 
-                        case 7 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H')
+                        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
                             channelH = bufferValues;
 
@@ -2790,7 +3143,11 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                 
             end
             
-            fprintf('getRapidBlockData: Data succesfully retrieved.\n\n');
+            if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+                
+                fprintf('getRapidBlockData: Data succesfully retrieved.\n\n');
+                
+            end
             
             clear pBuffer;
             
@@ -3032,12 +3389,6 @@ For further information on the ps4000aSetNoOfCaptures function please refer to t
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If awgBufferSize doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'awgBufferSize') )
-        deviceObj.DriverData.awgBufferSize = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.awgBufferSize;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3070,12 +3421,6 @@ For further information on the ps4000aSetNoOfCaptures function please refer to t
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If dacFrequency doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'dacFrequency') )
-        deviceObj.DriverData.dacFrequency = 80e6;
-    end
-    
     propertyValue = deviceObj.DriverData.dacFrequency;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3108,12 +3453,6 @@ For further information on the ps4000aSetNoOfCaptures function please refer to t
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If offsetVoltage doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'offsetVoltage') )
-        deviceObj.DriverData.offsetVoltage = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.offsetVoltage;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3150,12 +3489,6 @@ The sum of the offset voltage and peak to peak voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If peakToPeakVoltage doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'peakToPeakVoltage') )
-        deviceObj.DriverData.peakToPeakVoltage = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.peakToPeakVoltage;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3192,12 +3525,6 @@ The sum of the peak to peak voltage and offset voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If sigGenType doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'sigGenType') )
-        deviceObj.DriverData.sigGenType = [ ];
-    end
-    
     propertyValue = deviceObj.DriverData.sigGenType;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3236,12 +3563,6 @@ The sum of the peak to peak voltage and offset voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If startFrequency doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'startFrequency') )
-        deviceObj.DriverData.startFrequency = [ ];
-    end
-    
     propertyValue = deviceObj.DriverData.startFrequency;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3276,12 +3597,6 @@ The sum of the peak to peak voltage and offset voltage should not exceed +/- 400
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-     % If stopFrequency doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'stopFrequency') )
-        deviceObj.DriverData.stopFrequency = [ ];
-    end
-    
     propertyValue = deviceObj.DriverData.stopFrequency;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -3564,7 +3879,7 @@ For further information on the ps4000aSetSigGenArbitrary function please refer t
 
         startDeltaPhase = 0;
         
-        single =  0; % ps4000aEnuminfo.enPS4000AIndexMode.PS4000A_SINGLE
+        single =  deviceObj.DriverData.enums.enPS4000AIndexMode.PS4000A_SINGLE;
         
         [status, startDeltaPhase] = calllib('ps4000a', 'ps4000aSigGenFrequencyToPhase', ...
                                   deviceObj.DriverData.unitHandle, ...
@@ -3897,7 +4212,7 @@ For further information, please view the Help text for the ps4000aSetSigGenBuilt
     
     offsetVoltage = 0;
     pkToPk = 0;
-    waveTypeDC = 8; % ps4000aEnuminfo.enPS4000AWaveType.PS4000A_DC_VOLTAGE
+    waveTypeDC = deviceObj.DriverData.enums.enPS4000AWaveType.PS4000A_DC_VOLTAGE;
     
     
     status = calllib('ps4000a', 'ps4000aSetSigGenBuiltIn', ...
@@ -4170,13 +4485,8 @@ For further information on the ps4000aSetSigGenPropertiesBuiltIn function please
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-    % If autoStop doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'autoStop') )
-        deviceObj.DriverData.autoStop = 0;
-    else
-        propertyValue = deviceObj.DriverData.autoStop;
-    end</GetMCode>
+    propertyValue = deviceObj.DriverData.autoStop;
+</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
 %   This function is called to set the device or group object property
@@ -4213,12 +4523,6 @@ This flag should be set to 0 (collect streaming data continously) or 1 (stop aft
 %   the property is a base device property, OBJ is the device object.
 
     deviceObj = get(obj, 'Parent');
-    
-    % If streamingInterval doesn't exist, create it.
-    if ( ~isfield(deviceObj.DriverData, 'streamingInterval') )
-        deviceObj.DriverData.streamingInterval = 0;
-    end
-    
     propertyValue = deviceObj.DriverData.streamingInterval;</GetMCode>
                   <SetMCode>function set(obj, propertyName, propertyValue)
 % Set a property value.
@@ -4470,12 +4774,12 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
 
     streamingInterval = deviceObj.DriverData.streamingInterval;
     
-    femtosecondsEnum    = 0; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_FS
-    picosecondsEnum     = 1; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_PS
-    nanosecondsEnum     = 2; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_NS
-    microsecondsEnum    = 3; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_US
-    millisecondsEnum    = 4; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_MS
-    secondsEnum         = 5; % ps4000aEnuminfo.enPS4000ATimeUnits.PS4000A_S
+    femtosecondsEnum    = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_FS;
+    picosecondsEnum     = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_PS;
+    nanosecondsEnum     = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_NS;
+    microsecondsEnum    = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_US;
+    millisecondsEnum    = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_MS;
+    secondsEnum         = deviceObj.DriverData.enums.enPS4000ATimeUnits.PS4000A_S;
     
     sampleIntervalTimeUnits = secondsEnum;
     
@@ -4568,7 +4872,11 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
     
     if(status == PicoStatus.PICO_OK)
            
-        fprintf('ps4000aRunStreaming:- Sample interval %d', sampleInterval);
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf('ps4000aRunStreaming:- Sample interval %d', sampleInterval);
+            
+        end
         
         switch(sampleIntervalTimeUnits)
        
@@ -4602,7 +4910,11 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
         
         end
         
-        fprintf('%s\n', sampleIntervalTimeUnitsStr);
+        if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
+            
+            fprintf(' %s\n', sampleIntervalTimeUnitsStr);
+            
+        end
         
         clear streamingInterval;
         clear femtosecondsEnum;
@@ -4613,7 +4925,8 @@ For further information on the ps4000aNoOfStreamingValues function please refer 
         clear secondsEnum;
         
     % Check for Power connection
-    elseif(status == PICO_USB3_0_DEVICE_NON_USB3_0_PORT)
+    elseif(status == PicoStatus.PICO_USB3_0_DEVICE_NON_USB3_0_PORT || ...
+            status == PicoStatus.PICO_POWER_SUPPLY_NOT_CONNECTED)
     
         status = invoke(obj, 'ps4000aChangePowerSource', status)
         
@@ -4996,7 +5309,7 @@ info - determines whether the function clears previous conditions:
 direction - the direction of the signal required for the trigger to fire (a PS4000A_DIRECTION enumeration available via ps4000aStruct.tPS4000ADirection) 
 lower - the lower limit of the pulse width counter, in samples.
 upper - the upper limit of the pulse width counter, in samples (only used for in range or out of range scenarios).
-type - the pulse width type (a ps4000aEnuminfo.enPS4000APulseWidthType enumeration).
+type - the pulse width type (an ps4000aEnuminfo.enPS4000APulseWidthType enumeration).
 
 Output parameters:
 
@@ -5019,57 +5332,57 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
     
     % Find the voltage range index
     % Set default as 5V (External trigger will use this range).
-    channelRange = 8; % ps4000aEnuminfo.enPS4000ARange.PS4000A_5V
+    channelRange = deviceObj.DriverData.enums.enPS4000ARange.PS4000A_5V;
 
     % Obtain information for device 
     channelSettings = deviceObj.DriverData.channelSettings;
     
     % Range is item 3 in the row for each channel
 
-    switch(source)
+    switch (source)
 
         % Channel A
-        case 0 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
             channelRange = channelSettings(1,3);
 
         % Channel B
-        case 1 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_B
 
             channelRange = channelSettings(2,3);
 
         % Channel C
-        case 2 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_C
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_C
 
             channelRange = channelSettings(3,3);
 
         % Channel D
-        case 3 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_D
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_D
 
             channelRange = channelSettings(4,3);
         
         % Channel E
-        case 4 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_E
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_E
 
             channelRange = channelSettings(5,3);
 
         % Channel F
-        case 5 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_F
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_F
 
             channelRange = channelSettings(6,3);
 
         % Channel G
-        case 6 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_G
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_G
 
             channelRange = channelSettings(7,3);
 
         % Channel H
-        case 7 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_H
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_H
 
             channelRange = channelSettings(8,3);
             
         % External trigger
-        case 8 % ps4000aEnuminfo.enPS4000AChannel.PS4000A_EXTERNAL
+        case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_EXTERNAL
             
             % External trigger has +/-5V range - no need to change.
 
@@ -5090,7 +5403,7 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
             thresholdADC, direction, deviceObj.DriverData.delay, ...
             deviceObj.DriverData.autoTriggerMs);
         
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
        
         error('setSimpleTrigger: Status code:- %d. Please refer to the PicoStatus.m file.', status);
         
@@ -5168,16 +5481,16 @@ For further information on the underlying ps4000aSetTriggerChannelConditions fun
     
     % Set trigger to false for channel A
     
-    source = 0; % Channel A
+    source = deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A;
     thresholdADC = 0;
-    direction = 0;
+    direction = deviceObj.DriverData.enums.enPS4000AThresholdDirection.PS4000A_RISING;
     
     status = calllib('ps4000a', 'ps4000aSetSimpleTrigger', ...
             deviceObj.DriverData.unitHandle, PicoConstants.FALSE, source, ...
             thresholdADC, direction, deviceObj.DriverData.delay, ...
             deviceObj.DriverData.autoTriggerMs);
     
-    if(status ~= PicoStatus.PICO_OK)
+    if (status ~= PicoStatus.PICO_OK)
            
         error('setTriggerOff: Status code:- %d. Please refer to the PicoStatus.m file.', status);
         

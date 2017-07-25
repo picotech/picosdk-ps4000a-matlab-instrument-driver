@@ -22,15 +22,16 @@
 %     PS4000A_ID_Block_FFT_Example;
 %
 % *Description:*
-%     Demonstrates how to call functions in order to capture a block of
-%     data from a PicoScope 4000 Series Oscilloscope using the underlying
-%     'A' API and calculate a Fast Fourier Transform (FFT) on data collected
-%     from Channel A.
+%     Demonstrates how to call Instrument Driver functions in order to
+%     capture a block of data from a PicoScope 4000 series oscilloscope
+%     using the underlying (lib)ps4000a shared library API functions and
+%     calculate a Fast Fourier Transform (FFT) on data collected from
+%     channel A.
 %
 % *See also:* <matlab:doc('fft') fft> | <matlab:doc('icdevice') icdevice> |
 % <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* (C) Pico Technology Limited 2014 - 2015. All rights reserved.
+% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
 
 %% Suggested Input Test Signal
 % This example was published using the following test signal:
@@ -46,12 +47,39 @@ PS4000aConfig;
 
 %% Device Connection
 
+% Check if an Instrument session using the device object 'ps4000aDeviceObj'
+% is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
+if (exist('ps4000aDeviceObj', 'var') && ps4000aDeviceObj.isvalid && strcmp(ps4000aDeviceObj.status, 'open'))
+    
+    openDevice = questionDialog(['Device object ps4000aDeviceObj has an open connection. ' ...
+        'Do you wish to close the connection and continue?'], ...
+        'Device Object Connection Open');
+    
+    if (openDevice == PicoConstants.TRUE)
+        
+        % Close connection to device
+        disconnect(ps4000aDeviceObj);
+        delete(ps4000aDeviceObj);
+        
+    else
+
+        % Exit script if User 
+        return;
+        
+    end
+    
+end
+
 % Create a device object. 
 % The serial number can be specified as a second input parameter.
 ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 
 % Connect device object to hardware.
 connect(ps4000aDeviceObj);
+
+% To suppress output to the Command Window from certain functions, set the
+% |displayOutput| property
+set(ps4000aDeviceObj, 'displayOutput', PicoConstants.FALSE);
 
 %% Set Channels
 
@@ -125,6 +153,7 @@ while(status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
 
 end
 
+fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
 %% Set Simple Trigger

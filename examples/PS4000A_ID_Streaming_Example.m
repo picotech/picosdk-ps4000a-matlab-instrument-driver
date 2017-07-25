@@ -23,15 +23,15 @@
 %
 % *Description:*
 %     Demonstrates how to call functions in order to capture data in
-%     streaming mode data from a PicoScope 4000 Series Oscilloscope using 
-%     the underlying 'A' API.
+%     streaming mode data from a PicoScope 4000 series oscilloscope using
+%     the underlying (lib)ps4000a shared library API functions.
 %
 % *Note:* Not all device and group object functions used in this example
 % are compatible with the Test and Measurement Tool.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* (C) Pico Technology Limited 2014 - 2015. All rights reserved.
+% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
 
 %% Suggested Input Test Signals
 % This example was published using the following test signals:
@@ -55,6 +55,29 @@ channelB = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B;
 
 %% Device Connection
 
+% Check if an Instrument session using the device object 'ps4000aDeviceObj'
+% is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
+if (exist('ps4000aDeviceObj', 'var') && ps4000aDeviceObj.isvalid && strcmp(ps4000aDeviceObj.status, 'open'))
+    
+    openDevice = questionDialog(['Device object ps4000aDeviceObj has an open connection. ' ...
+        'Do you wish to close the connection and continue?'], ...
+        'Device Object Connection Open');
+    
+    if (openDevice == PicoConstants.TRUE)
+        
+        % Close connection to device
+        disconnect(ps4000aDeviceObj);
+        delete(ps4000aDeviceObj);
+        
+    else
+
+        % Exit script if User 
+        return;
+        
+    end
+    
+end
+
 % Create device -  specify serial number if required
 % Specify serial number as 2nd argument if required.
 ps4000aDeviceObj = icdevice('picotech_ps4000a_generic', ''); 
@@ -66,6 +89,7 @@ connect(ps4000aDeviceObj);
 
 [infoStatus, unitInfo] = invoke(ps4000aDeviceObj, 'getUnitInfo');
 
+disp('Device information:-')
 disp(unitInfo);
 
 %% Channel Setup

@@ -22,14 +22,14 @@
 %     PS4000A_ID_Block_Adv_Trigger_PWQ_Example;
 %
 % *Description:*
-%     Demonstrates how to call functions in order to capture a block of
-%     data using advanced trigger functions with a pulse width qualifier
-%     from a PicoScope 4000 Series Oscilloscope using the underlying 'A'
-%     API.
+%     Demonstrates how to call Instrument Driver functions in order to
+%     capture a block of data using advanced trigger functions with a pulse
+%     width qualifier from a PicoScope 4000 series oscilloscope using the
+%     underlying (lib)ps4000a shared library API functions.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* (C) Pico Technology Limited 2014 - 2015. All rights reserved.
+% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
 
 %% Suggested Input Test Signal
 % This example was published using the following test signal:
@@ -45,6 +45,29 @@ clc;
 PS4000aConfig;
 
 %% Device Connection
+
+% Check if an Instrument session using the device object 'ps4000aDeviceObj'
+% is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
+if (exist('ps4000aDeviceObj', 'var') && ps4000aDeviceObj.isvalid && strcmp(ps4000aDeviceObj.status, 'open'))
+    
+    openDevice = questionDialog(['Device object ps4000aDeviceObj has an open connection. ' ...
+        'Do you wish to close the connection and continue?'], ...
+        'Device Object Connection Open');
+    
+    if (openDevice == PicoConstants.TRUE)
+        
+        % Close connection to device
+        disconnect(ps4000aDeviceObj);
+        delete(ps4000aDeviceObj);
+        
+    else
+
+        % Exit script if User 
+        return;
+        
+    end
+    
+end
 
 % Create a device object. 
 % The serial number can be specified as a second input parameter.
@@ -124,6 +147,7 @@ while(status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
 
 end
 
+fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
 %% Set Advanced Trigger with Pulse Width Qualifier
