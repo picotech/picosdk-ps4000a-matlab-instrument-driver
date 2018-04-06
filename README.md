@@ -88,12 +88,12 @@ See [LICENSE.md](LICENSE.md) for license terms.
 
 *PicoScope* is a registered trademark of Pico Technology Ltd. 
 
-*MATLAB* is a registered trademark of The Mathworks, Inc. *Signal Processing Toolbox*
-is a trademark of The Mathworks, Inc.
+*MATLAB* is a registered trademark of The Mathworks, Inc. *Instrument Control Toolbox* and *Signal Processing Toolbox*
+are trademarks of The Mathworks, Inc.
 
 *Windows* is a registered trademark of Microsoft Corporation. 
 
 *Linux* is the registered trademark of Linus Torvalds in the U.S. and other countries.
 
-Copyright © 2014-2017 Pico Technology Ltd. All rights reserved. 
+Copyright © 2014-2018 Pico Technology Ltd. All rights reserved. 
 
