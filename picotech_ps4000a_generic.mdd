@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.11</InstrumentVersion>
+   <InstrumentVersion>1.2.12</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1851,12 +1851,12 @@ For further information on the ps4000aMemorySegments function please refer to th
         if (status == PicoStatus.PICO_NOT_USED)
             
             warning('ps4000aSetBandwidthFilter:NotSupportedByDevice', ['Device does not '...
-                'have bandwidth limiter. No setting has been applied.');
+                'have bandwidth limiter. No setting has been applied.']);
             
         elseif (status == PicoStatus.PICO_INVALID_BANDWIDTH)
             
             warning('ps4000aSetBandwidthFilter:InvalidBandwidth', ['Invalid bandwidth selected. ', ...
-                'Please check and try again');
+                'Please check and try again']);
             
         else
             
