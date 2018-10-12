@@ -23,7 +23,7 @@
 %
 % *Description:*
 %     Demonstrates how to call functions in order to capture data in
-%     streaming mode data from a PicoScope 4000 series oscilloscope using
+%     streaming mode data from a PicoScope 4000 Series oscilloscope using
 %     the underlying (lib)ps4000a shared library API functions.
 %
 % *Note:* Not all device and group object functions used in this example
@@ -31,7 +31,7 @@
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
+% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
 
 %% Suggested Input Test Signals
 % This example was published using the following test signals:
@@ -519,7 +519,7 @@ channelAFinal = pBufferChAFinal.Value();
 channelBFinal = pBufferChBFinal.Value();
 
 % Plot the total data collected on another figure.
-finalFigure = figure('Name','PicoScope 4000 Series Example - Streaming Mode Capture', ...
+finalFigure = figure('Name','PicoScope 4000 Series (A API) Example - Streaming Mode Capture', ...
     'NumberTitle','off');
 finalFigureAxes = axes('Parent', finalFigure);
 hold(finalFigureAxes, 'on');

@@ -23,12 +23,12 @@
 %
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to
-%     capture a block of data from a PicoScope 4000 series oscilloscope
+%     capture a block of data from a PicoScope 4000 Series oscilloscope
 %     using the underlying (lib)ps4000a shared library API functions.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
+% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
 
 %% Suggested Input Test Signal
 % This example was published using the following test signal:
@@ -217,7 +217,7 @@ blockGroupObj = blockGroupObj(1);
 %% Process Data
 % Plot data values returned from the device.
 
-figure1 = figure('Name','PicoScope 4000 Series Example - Block Mode Capture', ...
+figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Block Mode Capture', ...
     'NumberTitle', 'off');
 
 % Calculate sampling interval (nanoseconds) and convert to milliseconds

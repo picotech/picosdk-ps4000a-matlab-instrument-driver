@@ -23,13 +23,13 @@
 %   
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to
-%     capture data in rapid block mode from a PicoScope 4000 series
+%     capture data in rapid block mode from a PicoScope 4000 Series
 %     oscilloscope using the underlying (lib)ps4000a shared library API
 %     functions.
 %   
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
+% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
 
 %% Suggested Input Test Signal
 % This example was published using the following test signal:
@@ -236,7 +236,7 @@ blockGroupObj = blockGroupObj(1);
 %% Process data
 % Plot data values in 3D showing history.
 
-figure1 = figure('Name','PicoScope 4000 Series Example - Rapid Block Mode Capture', ...
+figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Rapid Block Mode Capture', ...
     'NumberTitle', 'off');
 
 % Calculate time period over which samples were taken for each waveform. 
