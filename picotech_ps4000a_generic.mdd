@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.12</InstrumentVersion>
+   <InstrumentVersion>1.2.13</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1907,7 +1907,7 @@ For further information on the ps4000aSetBandwidthFilter function please refer t
     % Obtain channel settings information 
     chSettings = obj.DriverData.channelSettings;
 
-	if(status == PicoStatus.PICO_OK)
+	if (status == PicoStatus.PICO_OK)
 
         chSetIndex = channel + 1;
         
@@ -1920,9 +1920,7 @@ For further information on the ps4000aSetBandwidthFilter function please refer t
         
         % Information to be passed to the wrapper dll
         enabledChannels = zeros(PicoConstants.OCTO_SCOPE, 1, 'int16');
-        
-        %disp('Setting channels')
-        
+
         switch(obj.DriverData.channelCount)
             
             case PicoConstants.DUAL_SCOPE
@@ -1959,13 +1957,22 @@ For further information on the ps4000aSetBandwidthFilter function please refer t
         
     else
         
-        if(status == PicoStatus.PICO_INVALID_CHANNEL)
+        switch status
+            
+            case PicoStatus.PICO_INVALID_CHANNEL
            
-            error('ps4000aSetChannel: Invalid channel selected.');
+                error('Picotech:PS4000AInstrumentDriver:ps4000aSetChannel', 'ps4000aSetChannel: Invalid channel selected.');
+                
+            case PicoStatus.PICO_WARNING_PROBE_CHANNEL_OUT_OF_SYNC
+                
+                warning('Picotech:PS4000AInstrumentDriver:ps4000aSetChannel', 'ps4000aSetChannel: Probe state change detected on channel ', ...
+                    char('A' + channel), '. Please call ps4000aSetChannel with the correct settings.');
             
-        else
+            otherwise
             
-            error('ps4000aSetChannel:- Status code: %d. Please refer to the PicoStatus.m file.', status); 
+                error('Picotech:PS4000AInstrumentDriver:ps4000aSetChannel', ...
+                ['ps4000aSetChannel has returned status code ', num2str(status), ...
+                ' (0x' dec2hex(status), '). Please refer to PicoStatus.m for further information.' ]);
             
         end
         
