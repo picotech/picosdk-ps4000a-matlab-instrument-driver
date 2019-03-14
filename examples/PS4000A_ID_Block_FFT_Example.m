@@ -31,7 +31,7 @@
 % *See also:* <matlab:doc('fft') fft> | <matlab:doc('icdevice') icdevice> |
 % <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2017. See LICENSE file for terms.
+% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
 
 %% Suggested Input Test Signal
 % This example was published using the following test signal:
@@ -221,7 +221,7 @@ set(ps4000aDeviceObj, 'numPostTriggerSamples', 500e3);
 %% Process Data
 % Plot data values, calculate and plot FFT.
 
-figure1 = figure('Name','PicoScope 4000 Series Example - Block Mode Capture with FFT', ...
+figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Block Mode Capture with FFT', ...
     'NumberTitle', 'off');
 
 % Calculate sampling interval (nanoseconds) and convert to milliseconds

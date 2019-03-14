@@ -81,24 +81,27 @@ ps4000aConfigInfo.woW64DriverPath = fullfile(ps4000aConfigInfo.woW64SDKInstallPa
 if (ismac())
     
     % Libraries (including wrapper libraries) are stored in the PicoScope
-    % 6 App folder. Add locations of library files to environment variable.
+    % 6 App folder. Add locations of library files to environment variable
+    % or place in /usr/local/lib/
+
+    setenv('KMP_DUPLICATE_LIB_OK', 'TRUE')
     
-    setenv('DYLD_LIBRARY_PATH', '/Applications/PicoScope6.app/Contents/Resources/lib');
-    
-    if (strfind(getenv('DYLD_LIBRARY_PATH'), '/Applications/PicoScope6.app/Contents/Resources/lib'))
-       
-        % Add path to drivers if not already on the MATLAB path
-        if (isempty(strfind(path, ps4000aConfigInfo.macDriverPath)))
-        
-            addpath(ps4000aConfigInfo.macDriverPath);
-            
-        end
-        
-    else
-        
-        warning('PS4000aConfig:LibraryPathNotFound','Locations of libraries not found in DYLD_LIBRARY_PATH');
-        
-    end
+%     setenv('DYLD_LIBRARY_PATH', '/Applications/PicoScope6.app/Contents/Resources/lib');
+%     
+%     if (strfind(getenv('DYLD_LIBRARY_PATH'), '/Applications/PicoScope6.app/Contents/Resources/lib'))
+%        
+%         % Add path to drivers if not already on the MATLAB path
+%         if (isempty(strfind(path, ps4000aConfigInfo.macDriverPath)))
+%         
+%             addpath(ps4000aConfigInfo.macDriverPath);
+%             
+%         end
+%         
+%     else
+%         
+%         warning('PS4000aConfig:LibraryPathNotFound','Locations of libraries not found in DYLD_LIBRARY_PATH');
+%         
+%     end
     
 elseif (isunix())
         

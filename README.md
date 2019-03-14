@@ -82,6 +82,10 @@ Please leave a comment and rating for this submission on our [MATLAB Central Fil
 
 Contributions to examples are welcome. Please refer to our [guidelines for contributing](.github/CONTRIBUTING.md) for further information.
 
+## Versioning
+
+For the versions available, and release notes, refer to the [Releases](https://github.com/picotech/picosdk-ps4000a-matlab-instrument-driver/releases) page.
+
 ## Copyright and licensing
 
 See [LICENSE.md](LICENSE.md) for license terms. 

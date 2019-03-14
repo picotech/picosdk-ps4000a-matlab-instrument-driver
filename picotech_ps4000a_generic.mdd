@@ -17,15 +17,15 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright © 2014-2017 Pico Technology Ltd. All rights reserved. 
+% Copyright © 2014-2018 Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
-    fprintf('\nCopyright © 2014-2017 Pico Technology Ltd. All rights reserved.\n');
+    fprintf('\nPicoScope 4000 Series (A API) MATLAB Instrument Driver\n');
     fprintf('\n');
-    fprintf('PicoScope 4000 Series (A API) MATLAB Instrument Driver\n');
+    fprintf('Copyright © 2014-2018 Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
-
+    
     % Load libraries
     % ==============
     
