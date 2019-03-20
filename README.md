@@ -99,5 +99,5 @@ are trademarks of The Mathworks, Inc.
 
 *Linux* is the registered trademark of Linus Torvalds in the U.S. and other countries.
 
-Copyright © 2014-2018 Pico Technology Ltd. All rights reserved. 
+Copyright © 2014-2019 Pico Technology Ltd. All rights reserved. 
 

@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.13</InstrumentVersion>
+   <InstrumentVersion>1.2.14</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -17,13 +17,13 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright © 2014-2018 Pico Technology Ltd. All rights reserved. 
+% Copyright © 2014-2019 Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified. 
 % SB
     
     fprintf('\nPicoScope 4000 Series (A API) MATLAB Instrument Driver\n');
     fprintf('\n');
-    fprintf('Copyright © 2014-2018 Pico Technology Ltd. All rights reserved.\n');
+    fprintf('Copyright © 2014-2019 Pico Technology Ltd. All rights reserved.\n');
     fprintf('\n');
     
     % Load libraries
@@ -205,10 +205,10 @@
 % OBJ is the device object.
 % End of function definition - DO NOT EDIT
 
-% Copyright (C) 2014-2017 Pico Technology Ltd. All rights reserved. 
+% Copyright (C) 2014-2019 Pico Technology Ltd. All rights reserved. 
 % You may copy and distribute this file as long as it remains unmodified.
 
-    disp('Opening PicoScope 4000 Series device...');
+    disp('Opening PicoScope 4000 Series (A API) device...');
 
     % Structure to hold status values while connecting to the device.
     % Only output when the driver is called using command line or script.
@@ -378,10 +378,27 @@
 
         end
         
-        % TODO: - register callback function for intelligent probes
+        
         if (obj.DriverData.hasIntelligentProbeInterface == PicoConstants.TRUE)
-           
             
+            fprintf('Initializing probe interface...\n');
+            status = calllib('ps4000aWrap', 'setProbeInteractionCallback', obj.DriverData.unitHandle);
+            
+            if (status == PicoStatus.PICO_OK)
+            
+                % Need to wait for probe interaction to detect all connected
+                % probes
+                % TO DO - check how long it takes to initialise
+                pause(2.0);
+                fprintf('Probe interface initialization complete.\n');
+           
+            else
+                
+               error('Picotech:PS4000AInstrumentDriver:Connect', ...
+                ['setProbeInteractionCallback has returned status code ', num2str(status), ...
+                ' (0x' dec2hex(status), '). Please refer to PicoStatus.m for further information.' ]); 
+                
+            end
             
         end
         
@@ -483,7 +500,7 @@
         obj.DriverData.streamingInterval = 1e-6; % 1us -&gt; 1MS/s
         obj.DriverData.autoStop = PicoConstants.TRUE;
 
-        if(obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
+        if (obj.DriverData.sigGenType == PicoConstants.SIG_GEN_FUNCT_GEN || ...
             obj.DriverData.sigGenType == PicoConstants.SIG_GEN_AWG)
        
             obj.DriverData.startFrequency = 1000;
@@ -499,7 +516,7 @@
         
         % Display unit information to user if not using TMTool
         fprintf('\n');
-        fprintf('Connected to PicoScope 4000 Series device:-\n\n');
+        fprintf('Connected to PicoScope 4000 Series (A API) device:-\n\n');
         fprintf('      Instrument Model: %s\n', get(obj, 'InstrumentModel'));
         fprintf('   Batch/Serial Number: %s\n', unitSerial);
         fprintf('       Analog Channels: %d\n', get(obj, 'channelCount'));
@@ -1918,7 +1935,7 @@ For further information on the ps4000aSetBandwidthFilter function please refer t
 
         obj.DriverData.channelSettings = chSettings;
         
-        % Information to be passed to the wrapper dll
+        % Information to be passed to the wrapper library
         enabledChannels = zeros(PicoConstants.OCTO_SCOPE, 1, 'int16');
 
         switch(obj.DriverData.channelCount)
@@ -1965,8 +1982,8 @@ For further information on the ps4000aSetBandwidthFilter function please refer t
                 
             case PicoStatus.PICO_WARNING_PROBE_CHANNEL_OUT_OF_SYNC
                 
-                warning('Picotech:PS4000AInstrumentDriver:ps4000aSetChannel', 'ps4000aSetChannel: Probe state change detected on channel ', ...
-                    char('A' + channel), '. Please call ps4000aSetChannel with the correct settings.');
+                warning('Picotech:PS4000AInstrumentDriver:ps4000aSetChannel', ['ps4000aSetChannel: Probe state change detected on channel ', ...
+                    char('A' + channel), '. Please call ps4000aSetChannel with the correct settings.']);
             
             otherwise
             
