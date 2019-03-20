@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.15</InstrumentVersion>
+   <InstrumentVersion>1.2.16</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -149,13 +149,20 @@
     obj.DriverData.constants.PS4000A_HALF_SINE_MAX_FREQUENCY	= 1000000;
     obj.DriverData.constants.PS4000A_GAUSSIAN_MAX_FREQUENCY     = 1000000;
     obj.DriverData.constants.PS4000A_MIN_FREQUENCY              = 0.03;
+    
+    % Intelligent probe ranges
+    
+    obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_200_2KA_RANGES = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000];
+	obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_40A_RANGES = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 40];
+	obj.DriverData.constants.PICO_CONNECT_PROBE_CAT3_HV_1KV_RANGES = [2.5, 5, 12.5, 25, 50, 125, 250, 500, 1000];
+	obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_2000ARMS_RANGES = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
 
     % Maximum number of devices using this driver
     % -------------------------------------------
     
     obj.DriverData.constants.PS4000A_MAX_UNITS = 64;
     
-    % PicoScope 4000 Series Models (using the ps4000a driver)
+    % PicoScope 4000 Series Models (using the ps4000a driver API functions)
 
     obj.DriverData.variants.MODEL_NONE      = 'NONE';
 
@@ -1358,6 +1365,55 @@ When used in Streaming mode, this is the maximum number of raw samples before th
         'devicereset is not supported by this Instrument Driver - please use the resetDevice function instead.');</MCode>
                </Code>
                <Description>The devicereset function is not supported by this Instrument Driver. Please use the resetDevice function instead.</Description>
+            </Method>
+            <Method>
+               <Name>getInputChannelRangeAndUnits</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <MCode>function [range, units] = getInputChannelRangeAndUnits(obj, channel)
+% For group functions, OBJ is the group object. For
+% base device functions, OBJ is the device object.
+
+    if (channel &gt;= obj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A &amp;&amp; ...
+        channel &lt; obj.DriverData.channelCount)
+        
+        % Obtain range from channel settings
+
+        chSettingsIndex = channel + 1;
+        channelRange = obj.DriverData.channelSettings(chSettingsIndex, 3);
+
+        % Determine the probe type
+        
+        rangeSubId = mod(channelRange, 1000);
+        probeType = channelRange - rangeSubId;
+        
+        switch probeType
+            
+            case 4000 %PICO_CONNECT_PROBE_CURRENT_CLAMP_200_2KA
+                
+            case 5000 % PICO_CONNECT_PROBE_CURRENT_CLAMP_40A
+                
+            case 6000 % PICO_CONNECT_PROBE_CAT3_HV_1KV
+                
+            % case % PICO_CONNECT_PROBE_CURRENT_CLAMP_2000ARMS
+                
+            otherwise
+        
+                range = channelRange;
+                units = 'mV';
+                
+        end
+        
+    else
+       
+        error('Picotech:PS4000AInstrumentDriver:getInputChannelRangeAndUnits', ...
+                ['Invalid channel argument.']);
+        
+    end</MCode>
+               </Code>
+               <Description/>
             </Method>
             <Method>
                <Name>getUnitInfo</Name>
