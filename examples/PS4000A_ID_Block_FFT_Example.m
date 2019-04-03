@@ -31,21 +31,22 @@
 % *See also:* <matlab:doc('fft') fft> | <matlab:doc('icdevice') icdevice> |
 % <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
+% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
 
-%% Suggested Input Test Signal
+%% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: 4Vpp, 50Hz square wave
+% * Channel A: 4 Vpp, 50 Hz square wave
 
-%% Clear Command Window
+%% Clear command window
 
 clc;
 
-%% Load Configuration Information
+%% Load configuration information
+
 PS4000aConfig;
 
-%% Device Connection
+%% Device connection
 
 % Check if an Instrument session using the device object 'ps4000aDeviceObj'
 % is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
@@ -81,14 +82,18 @@ connect(ps4000aDeviceObj);
 % |displayOutput| property
 set(ps4000aDeviceObj, 'displayOutput', PicoConstants.FALSE);
 
-%% Set Channels
+%% Set channels
 
 % Default driver settings applied to channels are listed below - 
-% use ps4000aSetChannel to turn channels on or off and set voltage ranges, 
-% coupling, as well as analogue offset.
-
+% use |ps4000aSetChannel()| to turn channels on or off and set voltage ranges, 
+% coupling, as well as analog offset.
+%
 % In this example, data is only collected on Channel A so default settings
-% are used and channels B to H are switched off.
+% are used and other input channels are switched off.
+%
+% If using the PicoScope 4444, select the appropriate range value for the
+% probe connected to an input channel using the enumeration values
+% available from the |ps4000aEnuminfo.enPicoConnectProbeRange| substructure.
 
 % Channels       : 1 - 7 (ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B - PS4000A_CHANNEL_H)
 % Enabled        : 0
@@ -99,7 +104,7 @@ set(ps4000aDeviceObj, 'displayOutput', PicoConstants.FALSE);
 % Execute device object function(s).
 [status.setChB] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 1, 0, 1, 8, 0.0);
 
-if(ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ...
+if (ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ...
         ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
     [status.setChC] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 2, 0, 1, 8, 0.0);
@@ -107,7 +112,7 @@ if(ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ...
 
 end
 
-if(ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
+if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
     [status.setChE] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 4, 0, 1, 8, 0.0);
     [status.setChF] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 5, 0, 1, 8, 0.0);
@@ -116,14 +121,14 @@ if(ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
 end
 
-%% Verify Timebase Index and Maximum Number of Samples
-% Driver default timebase index used - use ps4000aGetTimebase2 to query the
-% driver as to suitability of using a particular timebase index and the
+%% Verify timebase index and maximum number of samples
+% Driver default timebase index used - use |ps4000aGetTimebase2()| to query
+% the driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer
 % memory has not been segmented in this example) then set the 'timebase'
 % property if required.
 %
-% To use the fastest sampling interval possible, set one analogue channel
+% To use the fastest sampling interval possible, set one analog channel
 % and turn off all other channels.
 %
 % Use a while loop to query the function until the status indicates that a
@@ -137,11 +142,11 @@ end
 status.getTimebase2 = PicoStatus.PICO_INVALID_TIMEBASE;
 timebaseIndex = get(ps4000aDeviceObj, 'timebase');
 
-while(status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
+while (status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
 
     [status.getTimebase2, timeIntervalNanoSeconds, maxSamples] = invoke(ps4000aDeviceObj, 'ps4000aGetTimebase2', timebaseIndex, 0);
     
-    if(status.getTimebase2 == PicoStatus.PICO_OK)
+    if (status.getTimebase2 == PicoStatus.PICO_OK)
        
         break;
         
@@ -156,7 +161,7 @@ end
 fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
-%% Set Simple Trigger
+%% Set simple trigger
 % Set a trigger on Channel A, with an auto timeout - the default value for
 % delay is used.
 
@@ -166,7 +171,7 @@ set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 triggerGroupObj = get(ps4000aDeviceObj, 'Trigger');
 triggerGroupObj = triggerGroupObj(1);
 
-% Set the autoTriggerMs property in order to automatically trigger the
+% Set the |autoTriggerMs| property in order to automatically trigger the
 % oscilloscope after 1 second if a trigger event has not occurred. Set to 0
 % to wait indefinitely for a trigger event.
 
@@ -178,7 +183,7 @@ set(triggerGroupObj, 'autoTriggerMs', 1000);
 
 [status.setSimpleTrigger] = invoke(triggerGroupObj, 'setSimpleTrigger', 0, 500, 2);
 
-%% Set Block Parameters and Capture Data
+%% Set block parameters and capture Data
 % Capture a block of data and retrieve data values for Channel A.
 
 % Block data acquisition properties and functions are located in the 
@@ -193,10 +198,10 @@ set(ps4000aDeviceObj, 'numPreTriggerSamples', 500e3);
 set(ps4000aDeviceObj, 'numPostTriggerSamples', 500e3);
 
 %%
-% This example uses the _runBlock_ function in order to collect a block of
+% This example uses the |runBlock()| function in order to collect a block of
 % data - if other code needs to be executed while waiting for the device to
-% indicate that it is ready, use the _ps4000aRunBlock_ function and poll
-% the _ps4000aIsReady_ function.
+% indicate that it is ready, use the |ps4000aRunBlock()| function and poll
+% the |ps4000aIsReady()| function.
 
 % Capture a block of data:
 %
@@ -218,14 +223,14 @@ set(ps4000aDeviceObj, 'numPostTriggerSamples', 500e3);
 % Stop the device
 [status.stop] = invoke(ps4000aDeviceObj, 'ps4000aStop');
 
-%% Process Data
+%% Process data
 % Plot data values, calculate and plot FFT.
 
 figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Block Mode Capture with FFT', ...
     'NumberTitle', 'off');
 
 % Calculate sampling interval (nanoseconds) and convert to milliseconds
-% Use the timeIntervalNanoSeconds output from the ps4000aGetTimebase2
+% Use the |timeIntervalNanoSeconds| output from the |ps4000aGetTimebase2()|
 % function or calculate it using the main Programmer's Guide.
 
 timeNs = double(timeIntervalNanoSeconds) * double(0:numSamples - 1);
@@ -238,7 +243,23 @@ plot(chAAxes,timeMs, chA);
 
 title(chAAxes, 'Block Data Acquisition');
 xlabel(chAAxes, 'Time (ms)');
-ylabel(chAAxes, 'Voltage (mV)');
+
+% Obtain the channel range and units
+[chARange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
+
+if (isequal(chAUnits, 'V'))
+
+    ylabel(chAAxes, 'Voltage (V)');
+    
+elseif (isequal(chAUnits, 'A'))
+   
+    ylabel(chAAxes, 'Current (A)');
+    
+else
+    
+    ylabel(chAAxes, 'Voltage (mV)');
+    
+end
 
 grid(chAAxes, 'on');
 legend(chAAxes, 'Channel A');
@@ -262,7 +283,8 @@ grid(chAFFTAxes, 'on');
 % Note the peaks at the odd harmonics of the fundamental frequency in the
 % figure above.
 
-%% Disconnect Device
+%% Disconnect device
 % Disconnect device object from hardware.
+
 disconnect(ps4000aDeviceObj);
 delete(ps4000aDeviceObj);

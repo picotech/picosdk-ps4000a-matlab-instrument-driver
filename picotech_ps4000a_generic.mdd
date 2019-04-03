@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16.3</InstrumentVersion>
+   <InstrumentVersion>1.2.16.4</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1367,12 +1367,12 @@ When used in Streaming mode, this is the maximum number of raw samples before th
                <Description>The devicereset function is not supported by this Instrument Driver. Please use the resetDevice function instead.</Description>
             </Method>
             <Method>
-               <Name>getInputChannelRangeAndUnits</Name>
+               <Name>getChannelInputRangeAndUnits</Name>
                <Location>parent</Location>
                <CapabilityGroup>Base</CapabilityGroup>
                <Type>MCode</Type>
                <Code>
-                  <MCode>function [range, units] = getInputChannelRangeAndUnits(obj, channel)
+                  <MCode>function [range, units] = getChannelInputRangeAndUnits(obj, channel)
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
@@ -1437,12 +1437,12 @@ When used in Streaming mode, this is the maximum number of raw samples before th
         
     else
        
-        error('Picotech:PS4000AInstrumentDriver:getInputChannelRangeAndUnitsInvalidChannel', ...
-                'getInputChannelRangeAndUnits: Invalid channel argument.');
+        error('Picotech:PS4000AInstrumentDriver:getChannelInputRangeAndUnitsInvalidChannel', ...
+                'getChannelInputRangeAndUnits: Invalid channel argument.');
         
     end</MCode>
                </Code>
-               <Description>getInputChannelRangeAndUnits(obj, channel)  returns the range set for a channel and corresponding units 
+               <Description>getChannelInputRangeAndUnits(obj, channel)  returns the range set for a channel and corresponding units 
 
 This function may be used with the Test and Measurement Tool.
 
@@ -2324,8 +2324,7 @@ For further information on the ps4000aStop function please refer to the PicoScop
         
     end
     
-    fprintf('\n');
-    disp('Initialisation complete.');</MCode>
+    disp('Initialization complete.');</MCode>
                </Code>
                <Description>resetDevice(obj) sets the default parameters for the device.
 
@@ -2593,7 +2592,6 @@ For further information, please also refer to the ps4000aSetChannel function.</D
             
         end
         
-        % Call ps4000aGetValues
         [getValuesStatus, numSamples, overflow] = ...
             calllib('ps4000a', 'ps4000aGetValues', unitHandle, startIndex, ...
                 totalSamples, ratio, ratioMode, segmentIndex, overflow);
@@ -2612,18 +2610,12 @@ For further information, please also refer to the ps4000aSetChannel function.</D
             % Retrieve data values for enabled channels
             for ch = 1:channelCount
 
-                if (channelSettings(ch,1) == PicoConstants.TRUE)
+                if (channelSettings(ch, 1) == PicoConstants.TRUE)
                     
-                    % Obtain the index for the
-                    % PicoConstants.SCOPE_INPUT_RANGES array corresponding
-                    % to the voltage range selected for the channel.
-                    scopeInputIndex = channelSettings(ch,3) + 1;
+                    % Obtain the probe input range for the channel.
+                    [channelInputRange, ~] = invoke(deviceObj, 'getChannelInputRangeAndUnits', (ch - 1));
                     
-                    % Obtain the voltage range for the channel.
-                    voltageRange = PicoConstants.SCOPE_INPUT_RANGES(scopeInputIndex);
-                    
-                    bufferValues = adc2mv(pBuffer(ch).Value, voltageRange, ...
-                        maxADCValue);
+                    bufferValues = adc2mv(pBuffer(ch).Value, channelInputRange, maxADCValue);
 
                     switch (ch - 1)
 
@@ -2703,22 +2695,24 @@ segmentIndex - the number of the memory segment to be used/where the data is sto
 ratio - the downsampling factor that will be applied to the raw data.
 ratioMode - which downsampling mode to use (specified by an enumeration from the PS4000A_RATIO_MODE range of enumerations excluding PS4000A_RATIO_MODE_AGGREGATE).
 
-
 Output parameters:
 
 status - the status code returned by the driver.
 numSamples - the number of samples retrieved from the driver.
 overflow - a set of flags that indicate whether an overvoltage has occurred on any of the channels.
-channelA - an array containing data values (in milliVolts) for channel A.
-channelB - an array containing data values (in milliVolts) for channel B.
-channelC - an array containing data values (in milliVolts) for channel C.
-channelD - an array containing data values (in milliVolts) for channel D.
-channelE - an array containing data values (in milliVolts) for channel E.
-channelF - an array containing data values (in milliVolts) for channel F.
-channelG - an array containing data values (in milliVolts) for channel G.
-channelH - an array containing data values (in milliVolts) for channel H.
+channelA - an array containing data values for channel A.
+channelB - an array containing data values for channel B.
+channelC - an array containing data values for channel C.
+channelD - an array containing data values for channel D.
+channelE - an array containing data values for channel E.
+channelF - an array containing data values for channel F.
+channelG - an array containing data values for channel G.
+channelH - an array containing data values for channel H.
 
-Channels not enabled or not supported by this device will be returned as an empty array.
+Notes:
+
+- Channels not enabled or not supported by this device will be returned as an empty array.
+- If using the PicoScope 4444, the values will be scaled according to the input range of the connected probe, otherwise values will be returned in millivolts. Use the getChannelInputRangeAndUnits() function to obtain the channel input range and units.
 
 Please also refer to the ps4000aSetDataBuffer and ps4000aGetValues functions in the PicoScope 4000 Series (A API) PC Oscilloscopes Programmer's Guide.</Description>
             </Method>
@@ -3168,14 +3162,13 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
         overflowPtr = libpointer('int16Ptr', zeros(overflowSize, 1, 'int16'));
         overflow = 0;
         
-        % Call ps4000aGetValuesBulk
         [getValuesBulkStatus, numSamples] = calllib('ps4000a', ...
             'ps4000aGetValuesBulk', unitHandle, totalSamples, fromSegmentIndex, ...
             toSegmentIndex, ratio, ratioMode, overflowPtr);
         
         overflow = overflowPtr.Value;
         
-        if(getValuesBulkStatus == PicoStatus.PICO_OK)
+        if (getValuesBulkStatus == PicoStatus.PICO_OK)
             
             if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
                 
@@ -3189,10 +3182,10 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
             % Retrieve data values for enabled channels
             for ch = 1:channelCount
 
-                if(channelSettings(ch,1) == PicoConstants.TRUE)
+                if (channelSettings(ch,1) == PicoConstants.TRUE)
                     
-                    scopeInputIndex = channelSettings(ch, 3) + 1;
-                    voltageRange = PicoConstants.SCOPE_INPUT_RANGES(scopeInputIndex);
+                    % Obtain the probe input range for the channel.
+                    [channelInputRange, ~] = invoke(deviceObj, 'getChannelInputRangeAndUnits', (ch - 1));
                     
                     % Obtain a cell array representing the waveforms for 
                     % the channel
@@ -3204,7 +3197,7 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                     
                     bufferMatrix = [];
                     
-                    if(numCaptures &gt; 1)
+                    if (numCaptures &gt; 1)
                         
                         bufferMatrix = horzcat(bufferCell{1:end});
                         
@@ -3214,10 +3207,9 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
                         
                     end
                    
-                    bufferValues = adc2mv(bufferMatrix, voltageRange, ...
-                        maxADCValue);
+                    bufferValues = adc2mv(bufferMatrix, channelInputRange, maxADCValue);
                     
-                    switch(ch - 1)
+                    switch (ch - 1)
 
                         case deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_CHANNEL_A
 
@@ -3304,16 +3296,19 @@ Output parameters:
 status - the status code returned by the driver.
 numSamples - the number of samples retrieved from the driver.
 overflow - a set of flags that indicate whether an overvoltage has occurred on any of the channels.
-channelA - an array containing data values (in milliVolts) for channel A.
-channelB - an array containing data values (in milliVolts) for channel B.
-channelC - an array containing data values (in milliVolts) for channel C.
-channelD - an array containing data values (in milliVolts) for channel D.
-channelE - an array containing data values (in milliVolts) for channel E.
-channelF - an array containing data values (in milliVolts) for channel F.
-channelG - an array containing data values (in milliVolts) for channel G.
-channelH - an array containing data values (in milliVolts) for channel H.
+channelA - a matrix containing data values for channel A.
+channelB - a matrix containing data values for channel B.
+channelC - a matrix containing data values for channel C.
+channelD - a matrix containing data values for channel D.
+channelE - a matrix containing data values for channel E.
+channelF - a matrix containing data values for channel F.
+channelG - a matrix containing data values for channel G.
+channelH - a matrix containing data values for channel H.
 
-Channel data will be returned as an array in the form numSamples x numCaptures. Channels not enabled or not supported by this device will be returned as an empty array.
+Notes:
+
+- Channel data will be returned as an array in the form numSamples x numCaptures. Channels not enabled or not supported by this device will be returned as an empty array.
+- If using the PicoScope 4444, the values will be scaled according to the input range of the connected probe, otherwise values will be returned in millivolts. Use the getChannelInputRangeAndUnits() function to obtain the channel input range and units.
 
 Please also refer to the  ps4000aSetDataBuffer and ps4000aGetValues functions as well as the PicoScope 4000 Series (A API) PC Oscilloscopes Programmer's Guide.</Description>
             </Method>
@@ -5446,7 +5441,7 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
                <CapabilityGroup>Base</CapabilityGroup>
                <Type>MCode</Type>
                <Code>
-                  <MCode>function status = setSimpleTrigger(obj, source, thresholdMV, direction)
+                  <MCode>function status = setSimpleTrigger(obj, source, threshold, direction)
 % For group functions, OBJ is the group object. For
 % base device functions, OBJ is the device object.
 
@@ -5514,11 +5509,21 @@ For further information on the underlying ps4000aSetPulseWidthQualifierCondition
 
     end
     
-    % Obtain the range being used in milliVolts
-    channelRangeMV = PicoConstants.SCOPE_INPUT_RANGES(channelRange + 1);
-
+    channelInputRange = 5000; % Default of +/- 5 V
+    
+    if (isequal(source, deviceObj.DriverData.enums.enPS4000AChannel.PS4000A_EXTERNAL))
+        
+        channelInputRange = PicoConstants.SCOPE_INPUT_RANGES(channelRange + 1);
+        
+    else
+        
+        % Obtain the channel input range for PicoConnect probes.
+        [channelInputRange, ~] = invoke(deviceObj, 'getChannelInputRangeAndUnits', source);
+        
+    end
+    
     % Calculate the threshold in ADC counts
-    thresholdADC = mv2adc(thresholdMV, channelRangeMV, deviceObj.DriverData.maxADCValue);
+    thresholdADC = mv2adc(threshold, channelInputRange, deviceObj.DriverData.maxADCValue);
 
     status = calllib('ps4000a', 'ps4000aSetSimpleTrigger', ...
             deviceObj.DriverData.unitHandle, PicoConstants.TRUE, source, ...
@@ -5542,7 +5547,7 @@ Input parameters:
 
 obj - the object representing the Trigger group.
 source - the channel on which to trigger.
-thresholdMV - the level at which the trigger will fire (in millivolts).
+threshold - the level at which the trigger will fire. For the PicoScope 4444, this will be either in millivolts, volts (1 kV high voltage probe) or amps. For other devices, this will be in millivolts.
 direction - the direction in which the signal must move to cause a trigger.
 
 Output parameters:

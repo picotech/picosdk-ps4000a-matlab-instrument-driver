@@ -29,21 +29,22 @@
 %   
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
+% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
 
-%% Suggested Input Test Signal
+%% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: Swept sine wave (Start: 50Hz, Stop: 1kHz, Sweep type: Up, Increment: 40Hz, Increment Time: 10ms)
+% * Channel A: Swept sine wave (Start: 50 Hz, Stop: 1 kHz, Sweep type: Up, Increment: 40 Hz, Increment Time: 10 ms)
 
-%% Clear Command Window
+%% Clear command window
 
 clc;
 
-%% Load Configuration Information
+%% Load configuration information
+
 PS4000aConfig;
 
-%% Device Connection
+%% Device connection
 
 % Check if an Instrument session using the device object 'ps4000aDeviceObj'
 % is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
@@ -75,14 +76,18 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 % Connect device object to hardware.
 connect(ps4000aDeviceObj);
 
-%% Set Channels
+%% Set channels
 
 % Default driver settings applied to channels are listed below - 
 % use ps4000aSetChannel to turn channels on or off and set voltage ranges, 
 % coupling, as well as analogue offset.
-
+%
 % In this example, data is only collected on Channel A so default settings
-% are used and channels B to H are switched off.
+% are used and other input channels are switched off.
+%
+% If using the PicoScope 4444, select the appropriate range value for the
+% probe connected to an input channel using the enumeration values
+% available from the |ps4000aEnuminfo.enPicoConnectProbeRange| substructure.
 
 % Channels       : 1 - 7 (ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B - PS4000A_CHANNEL_H)
 % Enabled        : 0
@@ -93,7 +98,7 @@ connect(ps4000aDeviceObj);
 % Execute device object function(s).
 [status.setChB] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 1, 0, 1, 8, 0.0);
 
-if(ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ...
+if (ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ...
         ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
     [status.setChC] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 2, 0, 1, 8, 0.0);
@@ -101,7 +106,7 @@ if(ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ...
     
 end
 
-if(ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
+if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
     [status.setChE] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 4, 0, 1, 8, 0.0);
     [status.setChF] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 5, 0, 1, 8, 0.0);
@@ -110,21 +115,28 @@ if(ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 
 end
 
-%% Set Memory Segments
-% Configure number of memory segments and query ps4000aGetMaxSegments to
+%% Set memory segments and number of samples per channel/segment
+% Configure number of memory segments and query |ps4000aGetMaxSegments()| to
 % find the maximum number of samples for each segment.
 
 % nSegments : 128
 
 [status.memorySegments, nMaxSamples] = invoke(ps4000aDeviceObj, 'ps4000aMemorySegments', 128);
 
-%% Verify Timebase Index and Maximum Number of Samples
-% Driver default timebase index used - use ps4000aGetTimebase2 to query the
+% Set the number of pre- and post-trigger samples to collect per channel
+% for each waveform. Ensure that the total does not exceed |nMaxSamples|
+% above.
+
+set(ps4000aDeviceObj, 'numPreTriggerSamples', 2500);
+set(ps4000aDeviceObj, 'numPostTriggerSamples', 7500);
+
+%% Verify timebase index and maximum number of samples
+% Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected then set the
-% 'timebase' property if required.
+% |timebase| property if required.
 %
-% To use the fastest sampling interval possible, set one analogue channel
+% To use the fastest sampling interval possible, set one analog channel
 % and turn off all other channels.
 %
 % Use a while loop to query the function until the status indicates that a
@@ -142,7 +154,7 @@ while(status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
 
     [status.getTimebase2, timeIntervalNanoSeconds, maxSamples] = invoke(ps4000aDeviceObj, 'ps4000aGetTimebase2', timebaseIndex, 0);
     
-    if(status.getTimebase2 == PicoStatus.PICO_OK)
+    if (status.getTimebase2 == PicoStatus.PICO_OK)
        
         break;
         
@@ -157,10 +169,10 @@ end
 fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
-%% Set Simple Trigger 
+%% Set simple trigger 
 % Set a trigger on Channel A, with an auto timeout - the default value for
-% delay is used. The trigger will wait for a rising edge through the specified
-% threshold unless the timeout occurs first.
+% delay is used. The trigger will wait for a rising edge through the
+% specified threshold unless the timeout occurs first.
 
 % Trigger properties and functions are located in the Instrument
 % Driver's Trigger group.
@@ -168,7 +180,7 @@ set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 triggerGroupObj = get(ps4000aDeviceObj, 'Trigger');
 triggerGroupObj = triggerGroupObj(1);
 
-% Set the autoTriggerMs property in order to automatically trigger the
+% Set the |autoTriggerMs| property in order to automatically trigger the
 % oscilloscope after 2 seconds if a trigger event has not occurred. Set to 
 % 0 to wait indefinitely for a trigger event.
 
@@ -180,7 +192,7 @@ set(triggerGroupObj, 'autoTriggerMs', 2000);
 
 [status.setSimpleTrigger] = invoke(triggerGroupObj, 'setSimpleTrigger', 0, 500, 2);
 
-%% Setup Rapid Block Parameters and Capture Data
+%% Setup rapid block parameters and capture data
 % Capture a set of rapid block data and retrieve data values for Channel A.
 
 % Rapid Block specific properties and functions are located in the Instrument
@@ -196,12 +208,6 @@ rapidBlockGroupObj = rapidBlockGroupObj(1);
 numCaptures = 16;
 [status.setNoOfCaptures] = invoke(rapidBlockGroupObj, 'ps4000aSetNoOfCaptures', numCaptures);
 
-% Set the number of pre- and post-trigger samples to collect. Ensure that
-% the total does not exceeed nMaxSamples above.
-
-set(ps4000aDeviceObj, 'numPreTriggerSamples', 2500);
-set(ps4000aDeviceObj, 'numPostTriggerSamples', 7500);
-
 % Block specific properties and functions are located in the Instrument
 % Driver's Block group.
 
@@ -209,10 +215,10 @@ blockGroupObj = get(ps4000aDeviceObj, 'Block');
 blockGroupObj = blockGroupObj(1);
 
 %%
-% This example uses the _runBlock_ function in order to collect a block of
+% This example uses the |runBlock()| function in order to collect a block of
 % data - if other code needs to be executed while waiting for the device to
-% indicate that it is ready, use the _ps4000aRunBlock_ function and poll
-% the _ps4000aIsReady_ function.
+% indicate that it is ready, use the |ps4000aRunBlock()| function and poll
+% the |ps4000aIsReady()| function.
 
 % Capture the blocks of data
 
@@ -228,9 +234,9 @@ blockGroupObj = blockGroupObj(1);
 
 % Provide additional output arguments for the remaining channels e.g. chB
 % for Channel B
-[numSamples, overflow, chA] = invoke(rapidBlockGroupObj, 'getRapidBlockData', 16, 1, 0);
+[numSamples, overflow, chA] = invoke(rapidBlockGroupObj, 'getRapidBlockData', numCaptures, 1, 0);
 
-% Stop the Device
+% Stop the device
 [status.stop] = invoke(ps4000aDeviceObj, 'ps4000aStop');
 
 %% Process data
@@ -240,7 +246,7 @@ figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Rapid Block Mod
     'NumberTitle', 'off');
 
 % Calculate time period over which samples were taken for each waveform. 
-% Use the timeIntervalNanoSeconds output from the ps4000aGetTimebase2
+% Use the |timeIntervalNanoSeconds| output from the |ps4000aGetTimebase2()|
 % function or calculate it using the main Programmer's Guide.
 
 timeNs = double(timeIntervalNanoSeconds) * double(0:numSamples - 1);
@@ -260,7 +266,23 @@ end
 title('Rapid Block Data Acquisition - Channel A');
 xlabel('Time (ns)');
 ylabel('Capture');
-zlabel('Voltage (mV)');
+
+% Obtain the channel range and units
+[chARange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
+
+if (isequal(chAUnits, 'V'))
+
+    zlabel('Voltage (V)');
+    
+elseif (isequal(chAUnits, 'A'))
+   
+    zlabel('Current (A)');
+    
+else
+    
+    zlabel('Voltage (mV)');
+    
+end
 
 hold off;
 
