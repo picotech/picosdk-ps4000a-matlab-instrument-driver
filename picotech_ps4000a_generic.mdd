@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16.1</InstrumentVersion>
+   <InstrumentVersion>1.2.16.2</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1442,7 +1442,19 @@ When used in Streaming mode, this is the maximum number of raw samples before th
         
     end</MCode>
                </Code>
-               <Description/>
+               <Description>getInputChannelRangeAndUnits(obj, channel)  returns the range set for a channel and corresponding units 
+
+This function may be used with the Test and Measurement Tool.
+
+Input parameters:
+
+obj - the object representing the device.
+channel - the channel to be configured (an enumeration from the enPS4000AChannel range)
+
+Output parameters:
+
+range - the input range set for the channel. This will be returned as the positive maximum value for the input range set e.g. 5000 for a +/- 5 V range for a standard probe, or 2 for a +/- 2 A range for a current probe.
+units - the corresponding units for the range e.g. mV, V or A depending on the probe connected.</Description>
             </Method>
             <Method>
                <Name>getUnitInfo</Name>
@@ -2088,7 +2100,7 @@ This function may be used with the Test and Measurement Tool.
 Input parameters:
 
 obj - the object representing the device.
-channel - the channel to be configured (an enumeration from the PS4000A_CHANNEL range - PS4000A_CHANNEL_A to 	PS4000A_CHANNEL_H).
+channel - the channel to be configured (an enumeration from the PS4000A_CHANNEL range - PS4000A_CHANNEL_A to PS4000A_CHANNEL_H).
 enabled - set to TRUE (1) to enable the channel, FALSE (0) otherwise.
 type - the impedance and coupling type (an enumeration from the PS4000A_COUPLING range).
 range - the input voltage range (an enumeration from the PS4000A_RANGE range).
