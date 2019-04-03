@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16.2</InstrumentVersion>
+   <InstrumentVersion>1.2.16.3</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1387,7 +1387,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
         % Determine the probe type based on the range
         
         if (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_200A_2kA_1A &amp;&amp; ...
-            obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_200A_2kA_2000A)
+            channelRange &lt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_200A_2kA_2000A)
         
             % Find the index to use to obtain the correct range from the
             % array of possible ranges for the probe.
@@ -1397,7 +1397,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
             units = 'A';
         
         elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_40A_100mA &amp;&amp; ...
-                    obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_40A_40A)
+                    channelRange &lt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_40A_40A)
                 
             % Find the index to use to obtain the correct range from the
             % array of possible ranges for the probe.
@@ -1407,7 +1407,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
             units = 'A';
         
         elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_1KV_2_5V &amp;&amp; ...
-                    obj.DriverData.enums.enPicoConnectProbeRange.PICO_1KV_1000V)
+                    channelRange &lt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_1KV_1000V)
 
             % Find the index to use to obtain the correct range from the
             % array of possible ranges for the probe.
@@ -1418,7 +1418,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
         
         %{    
         elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_10A &amp;&amp; ...
-                    obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_5000A)
+                    channelRange &lt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_5000A)
                 
             % Find the index to use to obtain the correct range from the
             % array of possible ranges for the probe.
