@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16</InstrumentVersion>
+   <InstrumentVersion>1.2.16.1</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -1384,32 +1384,61 @@ When used in Streaming mode, this is the maximum number of raw samples before th
         chSettingsIndex = channel + 1;
         channelRange = obj.DriverData.channelSettings(chSettingsIndex, 3);
 
-        % Determine the probe type
+        % Determine the probe type based on the range
         
-        rangeSubId = mod(channelRange, 1000);
-        probeType = channelRange - rangeSubId;
+        if (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_200A_2kA_1A &amp;&amp; ...
+            obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_200A_2kA_2000A)
         
-        switch probeType
+            % Find the index to use to obtain the correct range from the
+            % array of possible ranges for the probe.
+            rangeIndex = channelRange - obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_200A_2kA_1A + 1;
             
-            case 4000 %PICO_CONNECT_PROBE_CURRENT_CLAMP_200_2KA
-                
-            case 5000 % PICO_CONNECT_PROBE_CURRENT_CLAMP_40A
-                
-            case 6000 % PICO_CONNECT_PROBE_CAT3_HV_1KV
-                
-            % case % PICO_CONNECT_PROBE_CURRENT_CLAMP_2000ARMS
-                
-            otherwise
+            range = obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_200_2KA_RANGES(rangeIndex);
+            units = 'A';
         
-                range = channelRange;
-                units = 'mV';
+        elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_40A_100mA &amp;&amp; ...
+                    obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_40A_40A)
+                
+            % Find the index to use to obtain the correct range from the
+            % array of possible ranges for the probe.
+            rangeIndex = channelRange - obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_40A_100mA + 1;
+            
+            range = obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_40A_RANGES(rangeIndex);
+            units = 'A';
+        
+        elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_1KV_2_5V &amp;&amp; ...
+                    obj.DriverData.enums.enPicoConnectProbeRange.PICO_1KV_1000V)
+
+            % Find the index to use to obtain the correct range from the
+            % array of possible ranges for the probe.
+            rangeIndex = channelRange - obj.DriverData.enums.enPicoConnectProbeRange.PICO_1KV_2_5V + 1;
+            
+            range = obj.DriverData.constants.PICO_CONNECT_PROBE_CAT3_HV_1KV_RANGES(rangeIndex);
+            units = 'V';
+        
+        %{    
+        elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_10A &amp;&amp; ...
+                    obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_5000A)
+                
+            % Find the index to use to obtain the correct range from the
+            % array of possible ranges for the probe.
+            rangeIndex = channelRange - obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_10A + 1;
+            
+            range = obj.DriverData.constants.obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_2000ARMS_RANGES(rangeIndex);
+            units = 'A';
+        %}    
+        else
+        
+            % Standard scope input ranges
+            range = PicoConstants.SCOPE_INPUT_RANGES(channelRange + 1);
+            units = 'mV';
                 
         end
         
     else
        
-        error('Picotech:PS4000AInstrumentDriver:getInputChannelRangeAndUnits', ...
-                ['Invalid channel argument.']);
+        error('Picotech:PS4000AInstrumentDriver:getInputChannelRangeAndUnitsInvalidChannel', ...
+                'getInputChannelRangeAndUnits: Invalid channel argument.');
         
     end</MCode>
                </Code>
