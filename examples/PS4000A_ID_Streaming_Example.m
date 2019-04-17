@@ -317,7 +317,10 @@ status.getStreamingLatestValues = PicoStatus.PICO_OK; % OK
 flag = 1; % Use flag variable to indicate if the stop button has been clicked (0).
 setappdata(gcf, 'run', flag);
 
-% Plot Properties - these are for displaying data as it is collected.
+% Plot Properties - these are for displaying data as it is collected. In
+% this example, data is displayed in millivolts. For other probes,
+% including when using PicoConnect 442 or current probes with the PicoScope
+% 4444, use the appropriate units for the vertical axes.
 
 if (plotLiveData == PicoConstants.TRUE)
     
