@@ -247,19 +247,7 @@ xlabel(chAAxes, 'Time (ms)');
 % Obtain the channel range and units
 [chARange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
 
-if (isequal(chAUnits, 'V'))
-
-    ylabel(chAAxes, 'Voltage (V)');
-    
-elseif (isequal(chAUnits, 'A'))
-   
-    ylabel(chAAxes, 'Current (A)');
-    
-else
-    
-    ylabel(chAAxes, 'Voltage (mV)');
-    
-end
+ylabel(chAAxes, getVerticalAxisLabel(chAUnits));
 
 grid(chAAxes, 'on');
 legend(chAAxes, 'Channel A');

@@ -253,9 +253,9 @@ timeNs = double(timeIntervalNanoSeconds) * double(0:numSamples - 1);
 
 % Channel A
 axes1 = axes('Parent', figure1);
-view(axes1,[-15 24]);
-grid(axes1,'on');
-hold(axes1,'all');
+view(axes1, [-15 24]);
+grid(axes1, 'on');
+hold(axes1, 'all');
 
 for i = 1:numCaptures
     
@@ -263,27 +263,15 @@ for i = 1:numCaptures
     
 end
 
-title('Rapid Block Data Acquisition - Channel A');
-xlabel('Time (ns)');
-ylabel('Capture');
+title(axes1, 'Rapid Block Data Acquisition - Channel A');
+xlabel(axes1, 'Time (ns)');
+ylabel(axes1, 'Capture');
 
 % Obtain the channel range and units
 [chARange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
 
-if (isequal(chAUnits, 'V'))
-
-    zlabel('Voltage (V)');
+zlabel(axes1, getVerticalAxisLabel(chAUnits));
     
-elseif (isequal(chAUnits, 'A'))
-   
-    zlabel('Current (A)');
-    
-else
-    
-    zlabel('Voltage (mV)');
-    
-end
-
 hold off;
 
 %% Disconnect Device
