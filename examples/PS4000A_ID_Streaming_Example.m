@@ -33,27 +33,27 @@
 %
 % *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
 
-%% Suggested Input Test Signals
+%% Suggested input test signals
 % This example was published using the following test signals:
 %
 % * Channel A: 4 Vpp, 1 Hz sine wave
 % * Channel B: 2 Vpp, 2 Hz square wave   
 
-%% Clear Command Window
+%% Clear command window
 
 clc;
 
-%% Load Configuration Information
+%% Load configuration information
 
 PS4000aConfig;
 
-%% Parameter Definitions
+%% Parameter definitions
 % Define any parameters that might be required throughout the script.
 
 channelA = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
 channelB = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B;
 
-%% Device Connection
+%% Device connection
 
 % Check if an Instrument session using the device object 'ps4000aDeviceObj'
 % is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
@@ -93,6 +93,7 @@ disp('Device information:-')
 disp(unitInfo);
 
 %% Channel setup
+%
 % All channels are enabled by default - switch off all except Channels A
 % and B. 
 %
@@ -198,10 +199,11 @@ triggerGroupObj = triggerGroupObj(1);
 [status.setTriggerOff] = invoke(triggerGroupObj, 'setTriggerOff');
 
 %% Set data buffers
-% Data buffers for Channel A and B - buffers should be set with the driver,
-% and these MUST be passed with application buffers to the wrapper driver.
-% This will ensure that data is correctly copied from the driver buffers
-% for later processing.
+%
+% Data buffers for Channel A and B - buffers should be set with the
+% (lib)ps400a shared library, and these *MUST* be passed with application
+% buffers to the wrapper shared library. This will ensure that data is
+% correctly copied from the shared library buffers for later processing.
 
 overviewBufferSize  = 250000; % Size of the buffer(s) to collect data from the driver's buffer(s).
 segmentIndex        = 0;   
@@ -236,11 +238,12 @@ status.setAppAndDriverBuffersB = invoke(streamingGroupObj, 'setAppAndDriverBuffe
    pAppBufferChB, pDriverBufferChB, overviewBufferSize);
 
 %% Start streaming and collect data
+%
 % Use default value for streaming interval which is 1e-6 for 1 MS/s
 % Collect data for 1 second with auto stop - maximum array size will depend
 % on PC's resources - type 'memory' at MATLAB command prompt for further
 % information.
-
+%
 % To change the sample interval set the streamingInterval property of the
 % Streaming group object. The call to |ps4000aRunStreaming| will output the actual
 % sampling interval used by the driver.
@@ -373,7 +376,7 @@ while (isAutoStopSet == PicoConstants.FALSE && status.getStreamingLatestValues =
 
        end
 
-       if(plotLiveData == PicoConstants.TRUE)
+       if (plotLiveData == PicoConstants.TRUE)
 
             drawnow;
 
@@ -496,10 +499,9 @@ if (plotLiveData == PicoConstants.TRUE)
     
     % Take hold off the current figure
     hold off;
+    movegui(figure1, 'west');
     
 end
-
-movegui(figure1, 'west');
 
 fprintf('\n');
 

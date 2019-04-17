@@ -29,16 +29,17 @@
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
 % * Channel A: 4 Vpp, 2 Hz square wave
 
-%% Clear command window
+%% Clear command window and close any figures
 
 clc;
+close all;
 
 %% Load configuration information
 
@@ -77,7 +78,7 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 connect(ps4000aDeviceObj);
 
 %% Set channels
-
+%
 % Default driver settings applied to channels are listed below - 
 % use |ps4000aSetChannel()| to turn channels on or off and set voltage ranges, 
 % coupling, as well as analog offset.
@@ -115,6 +116,7 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 end
 
 %% Verify timebase index and maximum number of samples
+%
 % Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer
@@ -155,6 +157,7 @@ fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
 %% Set advanced trigger with pulse width qualifier
+%
 % This example demonstrates the configuration of an advanced trigger with
 % pulse width qualifer in order to set up a Level Dropout Trigger on
 % Channel A when a signal falls below a threshold and stays low for a

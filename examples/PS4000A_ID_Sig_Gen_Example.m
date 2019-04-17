@@ -33,19 +33,25 @@
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
+% *Copyright:* © 2014-2018 Pico Technology Limited. See LICENSE file for terms.
 
-%% Test Setup
+%% Test setup
 % For this example the 'Gen' output of the oscilloscope was connected to
 % Channel A on another PicoScope oscilloscope running the PicoScope 6
 % software application. Images, where shown, depict output, or part of the
 % output in the PicoScope 6 display.
+%
+% *Note:* The various signal generator functions called in this script may
+% be combined with the functions used in the various data acquisition
+% examples in order to output a signal and acquire data. The functions to
+% setup the signal generator should be called prior to the start of data
+% collection.
 
-%% Load Configuration Information
+%% Load configuration information
 
 PS4000aConfig;
 
-%% Device Connection
+%% Device connection
 
 % Check if an Instrument session using the device object 'ps4000aDeviceObj'
 % is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
@@ -77,15 +83,15 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 % Connect device object to hardware.
 connect(ps4000aDeviceObj);
 
-%% Obtain Signal Generator Group Object
+%% Obtain signal generator group object
 % Signal Generator properties and functions are located in the Instrument
 % Driver's Signalgenerator group.
 
 sigGenGroupObj = get(ps4000aDeviceObj, 'Signalgenerator');
 sigGenGroupObj = sigGenGroupObj(1);
 
-%% Function Generator - Simple
-% Output a Sine wave, 2000mVpp, 0mV offset, 1000Hz (uses preset values for 
+%% Function generator - simple
+% Output a Sine wave, 2000 mVpp, 0 mV offset, 1000 Hz (uses preset values for 
 % offset, peak to peak voltage and frequency)
 
 % Wavetype : 0 (ps4000aEnuminfo.enPS4000AWaveType.PS4000A_SINE) 
@@ -97,9 +103,9 @@ sigGenGroupObj = sigGenGroupObj(1);
 % <<sine_wave_1kHz.PNG>>
 % 
 
-%% Function Generator - Sweep Frequency
-% Output a square wave, 2400mVpp, 500mV offset, and sweep continuously from
-% 500Hz to 50Hz in steps of 50Hz.
+%% Function generator - sweep frequency
+% Output a square wave, 2400 mVpp, 500 mV offset, and sweep continuously from
+% 500 Hz to 5 0Hz in steps of 50 Hz.
 
 % Set Signalgenerator group properties
 set(ps4000aDeviceObj.Signalgenerator(1), 'startFrequency', 50.0);
@@ -133,7 +139,7 @@ set(ps4000aDeviceObj.Signalgenerator(1), 'peakToPeakVoltage', 2400.0);
 % 
 
 %% Turn Off Signal Generator
-% Sets the output to 0V DC.
+% Sets the output to 0 V DC.
 
 [status.setSigGenOff] = invoke(sigGenGroupObj, 'setSigGenOff');
 
@@ -142,7 +148,7 @@ set(ps4000aDeviceObj.Signalgenerator(1), 'peakToPeakVoltage', 2400.0);
 % <<sig_gen_off.PNG>>
 % 
 
-%% Arbitrary Waveform Generator - Set Parameters
+%% Arbitrary waveform generator - set parameters
 % Set parameters (2000mVpp, 0mV offset, 2000 Hz frequency) and define an
 % arbitrary waveform.
 
@@ -165,7 +171,7 @@ awgBufferSize = get(sigGenGroupObj, 'awgBufferSize'); % Obtain the buffer size f
 x = 0: ((2 * pi) / (awgBufferSize - 1)): 2 * pi;
 y = normalise(sin(x) + sin(2 * x));
 
-%% Arbitrary Waveform Generator - Simple
+%% Arbitrary waveform generator - simple
 % Output an arbitrary waveform with constant frequency (defined above).
 
 % Arb. Waveform : y (defined above)
@@ -177,12 +183,12 @@ y = normalise(sin(x) + sin(2 * x));
 % <<arbitrary_waveform.PNG>>
 % 
 
-%% Turn Off Signal Generator
+%% Turn off signal generator
 % Sets the output to 0V DC.
 
 [status.setSigGenOff] = invoke(sigGenGroupObj, 'setSigGenOff');
 
-%% Arbitrary Waveform Generator - Output Shots
+%% Arbitrary waveform generator - output shots
 % Output 2 cycles of an arbitrary waveform using a software trigger.
 
 % Increment      : 0 (Hz)
@@ -209,12 +215,13 @@ y = normalise(sin(x) + sin(2 * x));
 % <<arbitrary_waveform_shots.PNG>>
 % 
 
-%% Turn Off Signal Generator
-% Sets the output to 0V DC.
+%% Turn off dignal generator
+% Sets the output to 0 V DC.
 
 [status.setSigGenOff] = invoke(sigGenGroupObj, 'setSigGenOff');
 
-%% Disconnect
+%% Disconnect device
 % Disconnect device object from hardware.
+
 disconnect(ps4000aDeviceObj);
 delete(ps4000aDeviceObj);

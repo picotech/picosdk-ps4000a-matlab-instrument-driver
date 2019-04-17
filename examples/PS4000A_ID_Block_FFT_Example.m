@@ -31,16 +31,17 @@
 % *See also:* <matlab:doc('fft') fft> | <matlab:doc('icdevice') icdevice> |
 % <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
 % * Channel A: 4 Vpp, 50 Hz square wave
 
-%% Clear command window
+%% Clear command window and close any figures
 
 clc;
+close all;
 
 %% Load configuration information
 
@@ -83,7 +84,7 @@ connect(ps4000aDeviceObj);
 set(ps4000aDeviceObj, 'displayOutput', PicoConstants.FALSE);
 
 %% Set channels
-
+%
 % Default driver settings applied to channels are listed below - 
 % use |ps4000aSetChannel()| to turn channels on or off and set voltage ranges, 
 % coupling, as well as analog offset.
@@ -122,6 +123,7 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 end
 
 %% Verify timebase index and maximum number of samples
+%
 % Driver default timebase index used - use |ps4000aGetTimebase2()| to query
 % the driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer

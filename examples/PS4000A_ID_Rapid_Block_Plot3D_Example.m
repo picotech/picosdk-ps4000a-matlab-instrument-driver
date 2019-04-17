@@ -29,16 +29,17 @@
 %   
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
 % * Channel A: Swept sine wave (Start: 50 Hz, Stop: 1 kHz, Sweep type: Up, Increment: 40 Hz, Increment Time: 10 ms)
 
-%% Clear command window
+%% Clear command window and close any figures
 
 clc;
+close all;
 
 %% Load configuration information
 
@@ -77,9 +78,9 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 connect(ps4000aDeviceObj);
 
 %% Set channels
-
+%
 % Default driver settings applied to channels are listed below - 
-% use ps4000aSetChannel to turn channels on or off and set voltage ranges, 
+% use |ps4000aSetChannel| to turn channels on or off and set voltage ranges, 
 % coupling, as well as analogue offset.
 %
 % In this example, data is only collected on Channel A so default settings
@@ -116,6 +117,7 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 end
 
 %% Set memory segments and number of samples per channel/segment
+%
 % Configure number of memory segments and query |ps4000aGetMaxSegments()| to
 % find the maximum number of samples for each segment.
 
@@ -131,6 +133,7 @@ set(ps4000aDeviceObj, 'numPreTriggerSamples', 2500);
 set(ps4000aDeviceObj, 'numPostTriggerSamples', 7500);
 
 %% Verify timebase index and maximum number of samples
+%
 % Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected then set the

@@ -28,16 +28,17 @@
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
 % * Channel A: 4 Vpp, 5 Hz sine wave
 
-%% Clear command window
+%% Clear command window and close any figures
 
 clc;
+close all;
 
 %% Load configuration information
 
@@ -76,7 +77,7 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 connect(ps4000aDeviceObj);
 
 %% Set channels
-
+%
 % Default driver settings applied to channels are listed below - 
 % use |ps4000aSetChannel()| to turn channels on or off and set voltage ranges, 
 % coupling, as well as analog offset.
@@ -114,6 +115,7 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 end
 
 %% Verify timebase index and maximum number of samples
+%
 % Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer
@@ -154,6 +156,7 @@ fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
 %% Set simple trigger
+%
 % Set a trigger on Channel A, with an auto timeout - the default value for
 % delay is used.
 
@@ -225,7 +228,7 @@ figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Block Mode Capt
     'NumberTitle', 'off');
 
 % Calculate sampling interval (nanoseconds) and convert to milliseconds
-% Use the |timeIntervalNanoSeconds| output from the |ps4000aGetTimebase2()|
+% Use the timeIntervalNanoSeconds output from the ps4000aGetTimebase2()
 % function or calculate it using the main Programmer's Guide.
 
 timeNs = double(timeIntervalNanoSeconds) * double(0:numSamples - 1);
