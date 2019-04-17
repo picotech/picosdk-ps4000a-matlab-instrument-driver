@@ -29,22 +29,22 @@
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* Â© Pico Technology Limited 2014-2018. See LICENSE file for terms.
+% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
 
-%% Suggested Input Test Signal
+%% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: 4Vpp, 2Hz square wave
+% * Channel A: 4 Vpp, 2 Hz square wave
 
-%% Clear Command Window
+%% Clear command window
 
 clc;
 
-%% Load Configuration Information
+%% Load configuration information
 
 PS4000aConfig;
 
-%% Device Connection
+%% Device connection
 
 % Check if an Instrument session using the device object 'ps4000aDeviceObj'
 % is still open, and if so, disconnect if the User chooses 'Yes' when prompted.
@@ -76,14 +76,18 @@ ps4000aDeviceObj = icdevice('picotech_ps4000a_generic.mdd', '');
 % Connect device object to hardware.
 connect(ps4000aDeviceObj);
 
-%% Set Channels
+%% Set channels
 
 % Default driver settings applied to channels are listed below - 
-% use ps4000aSetChannel to turn channels on or off and set voltage ranges, 
-% coupling, as well as analogue offset.
-
+% use |ps4000aSetChannel()| to turn channels on or off and set voltage ranges, 
+% coupling, as well as analog offset.
+%
 % In this example, data is only collected on Channel A so default settings
-% are used and channels B to H are switched off.
+% are used and other input channels are switched off.
+%
+% If using the PicoScope 4444, select the appropriate range value for the
+% probe connected to an input channel using the enumeration values
+% available from the |ps4000aEnuminfo.enPicoConnectProbeRange| substructure.
 
 % Channels       : 1 - 7 (ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B - PS4000A_CHANNEL_H)
 % Enabled        : 0
@@ -94,14 +98,14 @@ connect(ps4000aDeviceObj);
 % Execute device object function(s).
 [status.setChB] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 1, 0, 1, 8, 0.0);
 
-if(ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
+if (ps4000aDeviceObj.channelCount == PicoConstants.QUAD_SCOPE || ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 
     [status.setChC] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 2, 0, 1, 8, 0.0);
     [status.setChD] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 3, 0, 1, 8, 0.0);
 
 end
 
-if(ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
+if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 
     [status.setChE] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 4, 0, 1, 8, 0.0);
     [status.setChF] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 5, 0, 1, 8, 0.0);
@@ -110,14 +114,14 @@ if(ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 
 end
 
-%% Verify Timebase Index and Maximum Number of Samples
-% Driver default timebase index used - use ps4000aGetTimebase2 to query the
+%% Verify timebase index and maximum number of samples
+% Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer
 % memory has not been segmented in this example) then set the 'timebase'
 % property if required.
 %
-% To use the fastest sampling interval possible, set one analogue channel
+% To use the fastest sampling interval possible, set one analog channel
 % and turn off all other channels.
 %
 % Use a while loop to query the function until the status indicates that a
@@ -135,7 +139,7 @@ while(status.getTimebase2 == PicoStatus.PICO_INVALID_TIMEBASE)
 
     [status.getTimebase2, timeIntervalNanoSeconds, maxSamples] = invoke(ps4000aDeviceObj, 'ps4000aGetTimebase2', timebaseIndex, 0);
     
-    if(status.getTimebase2 == PicoStatus.PICO_OK)
+    if (status.getTimebase2 == PicoStatus.PICO_OK)
        
         break;
         
@@ -150,7 +154,7 @@ end
 fprintf('Timebase index: %d\n', timebaseIndex);
 set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 
-%% Set Advanced Trigger with Pulse Width Qualifier
+%% Set advanced trigger with pulse width qualifier
 % This example demonstrates the configuration of an advanced trigger with
 % pulse width qualifer in order to set up a Level Dropout Trigger on
 % Channel A when a signal falls below a threshold and stays low for a
@@ -162,7 +166,7 @@ set(ps4000aDeviceObj, 'timebase', timebaseIndex);
 triggerGroupObj = get(ps4000aDeviceObj, 'Trigger');
 triggerGroupObj = triggerGroupObj(1);
 
-% Set the autoTriggerMs property in order to automatically trigger the
+% Set the |autoTriggerMs| property in order to automatically trigger the
 % oscilloscope after 1 second if a trigger event has not occurred. Set to 0
 % to wait indefinitely for a trigger event.
 
@@ -174,21 +178,22 @@ set(triggerGroupObj, 'autoTriggerMs', 1000);
 % Obtain a Trigger Channel Properties structure from the ps4000aMfile prototype file
 triggerChannelProperties = ps4000aStructs.tPS4000ATriggerChannelProperties.members;
 
-% Obtain the voltage range (in millivolts) for Channel A
-chARangeMv = PicoConstants.SCOPE_INPUT_RANGES(ps4000aEnuminfo.enPS4000ARange.PS4000A_5V + 1);
+% Obtain the channel input range for Channel A.
+% In this example, the threshold and hysteresis are being set in millivolts.
+[chAInputRange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
 
 % Set the properties
-triggerChannelProperties.thresholdUpper             = mv2adc(500, chARangeMv, ps4000aDeviceObj.maxADCValue);
-triggerChannelProperties.thresholdUpperHysteresis   = mv2adc(40, chARangeMv, ps4000aDeviceObj.maxADCValue);
-triggerChannelProperties.thresholdLower             = mv2adc(500, chARangeMv, ps4000aDeviceObj.maxADCValue);
-triggerChannelProperties.thresholdLowerHysteresis   = mv2adc(40, chARangeMv, ps4000aDeviceObj.maxADCValue);
+triggerChannelProperties.thresholdUpper             = mv2adc(500, chAInputRange, ps4000aDeviceObj.maxADCValue);
+triggerChannelProperties.thresholdUpperHysteresis   = mv2adc(40, chAInputRange, ps4000aDeviceObj.maxADCValue);
+triggerChannelProperties.thresholdLower             = mv2adc(500, chAInputRange, ps4000aDeviceObj.maxADCValue);
+triggerChannelProperties.thresholdLowerHysteresis   = mv2adc(40, chAInputRange, ps4000aDeviceObj.maxADCValue);
 triggerChannelProperties.channel                    = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
 triggerChannelProperties.thresholdMode              = ps4000aEnuminfo.enPS4000AThresholdMode.PS4000A_LEVEL;
 
 % Trigger Directions
 % ------------------
 
-% Use a tPS4000ADirection struct in order to set the directions for each
+% Use a |tPS4000ADirection| struct in order to set the directions for each
 % channel. 
 triggerDirection            = ps4000aStructs.tPS4000ADirection.members;
 triggerDirection.channel    = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
@@ -200,24 +205,25 @@ disp('Setting advanced trigger parameters...')
 advancedTriggerStatus = invoke(triggerGroupObj, 'setAdvancedTrigger', ...
                             triggerChannelProperties, triggerDirection);
 
-% The info parameter clears and adds the conditions to the trigger. If an
-% 'OR' trigger condition is required call setTriggerChannelConditions
-% multiple times with the info parameter set to the PS4000A_ADD enumeration.
-% The bitor function can also be used here e.g. info = bitor(ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_CLEAR, ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_ADD);
-info = ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_CLEAR + ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_ADD;
+% In this example, the |info| parameter is used to clear any pre-existing
+% trigger conditions and adds a new condition to the trigger setup. If an
+% 'OR' trigger condition is required call |setTriggerChannelConditions()|
+% multiple times with the |info| parameter set to the PS4000A_ADD
+% enumeration on subsequent calls after the first.
+info = bitor(ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_CLEAR, ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_ADD);
 
 % Trigger Channel Conditions
 % --------------------------
 
 % Set up trigger conditions on the scope's inputs. An array of two
-% condition tPS4000ACondition structs is required here to indicate a
+% condition |tPS4000ACondition| structs is required here to indicate a
 % trigger AND pulse width qualifier condition.
 triggerCondition(1) =  ps4000aStructs.tPS4000ACondition.members;
 triggerCondition(2) =  ps4000aStructs.tPS4000ACondition.members;
 
 % In this example, the threshold level of Channel A is used with the Pulse
 % Width Qualifier, so the condition is set to the
-% PS4000A_CONDITION_DONT_CARE enumeration.
+% |PS4000A_CONDITION_DONT_CARE| enumeration.
 triggerCondition(1).source      = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
 triggerCondition(1).condition   = ps4000aEnuminfo.enPS4000ATriggerState.PS4000A_CONDITION_DONT_CARE;
 
@@ -227,25 +233,25 @@ triggerCondition(2).condition   = ps4000aEnuminfo.enPS4000ATriggerState.PS4000A_
 triggerConditionStatus = invoke(triggerGroupObj, 'setTriggerChannelConditions', ...
                             triggerCondition, info);
 
-% Pulse Width Qualifer (PWQ)
-% --------------------------
+% Pulse Width Qualifier (PWQ)
+% ---------------------------
 
-pwqTriggerCondition             =  ps4000aStructs.tPS4000ACondition.members;
+pwqTriggerCondition             = ps4000aStructs.tPS4000ACondition.members;
 pwqTriggerCondition.source      = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
 pwqTriggerCondition.condition   = ps4000aEnuminfo.enPS4000ATriggerState.PS4000A_CONDITION_TRUE;
 
 % PWQ Properties:
 % The info parameter clears and adds the conditions to the PWQ. If an
-% 'OR' condition is required call setPulseWidthQualifier
-% multiple times with the info parameter set to the PS4000A_ADD enumeration.
+% 'OR' condition is required call |setPulseWidthQualifier|
+% multiple times with the info parameter set to the |PS4000A_ADD| enumeration.
 
-pwqInfo     = ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_CLEAR + ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_ADD;
-pwDirection = ps4000aEnuminfo.enPS4000AThresholdDirection.PS4000A_ABOVE; 
+pwqInfo         = ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_CLEAR + ps4000aEnuminfo.enPS4000AConditionsInfo.PS4000A_ADD;
+pwqDirection    = ps4000aEnuminfo.enPS4000AThresholdDirection.PS4000A_ABOVE; 
 
 % Calculate the lower and upper thresholds as the number of samples based
 % on the desired time period and selected sampling interval. For example,
-% the lower limit is set to 100000 - at 1us, this is 100ms - this can be set
-% as (totalTimeInNanoSeconds / timeIntervalNanoSeconds = 100e6 / 1000).
+% the lower limit is set to 100000 - at 1 us, this is 100 ms - this can be set
+% as (|totalTimeInNanoSeconds| / |timeIntervalNanoSeconds| = 100e6 / 1000).
 lower       = 100000;
 upper       = 10;
 
@@ -253,9 +259,9 @@ upper       = 10;
 type        = ps4000aEnuminfo.enPS4000APulseWidthType.PS4000A_PW_TYPE_GREATER_THAN; 
 
 pwqStatus = invoke(triggerGroupObj, 'setPulseWidthQualifier', ...
-                pwqTriggerCondition, pwqInfo, pwDirection, lower, upper, type);
+                pwqTriggerCondition, pwqInfo, pwqDirection, lower, upper, type);
 
-%% Set Block Parameters and Capture Data
+%% Set block parameters and capture data
 % Capture a block of data and retrieve data values for Channel A.
 
 % Block data acquisition properties and functions are located in the 
@@ -294,7 +300,7 @@ set(ps4000aDeviceObj, 'numPostTriggerSamples', 2e6);
 % Stop the device
 [status.stop] = invoke(ps4000aDeviceObj, 'ps4000aStop');
 
-%% Process Data
+%% Process data
 % Plot data values returned from the device.
 
 figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Block Mode Capture with Adv. Trigger & PWQ', ...
@@ -303,7 +309,7 @@ figure1 = figure('Name','PicoScope 4000 Series (A API) Example - Block Mode Capt
 axes1 = gca;
 
 % Calculate sampling interval (nanoseconds) and convert to milliseconds
-% Use the timeIntervalNanoSeconds output from the ps4000aGetTimebase2
+% Use the |timeIntervalNanoSeconds| output from the |ps4000aGetTimebase2()|
 % function or calculate it using the main Programmer's Guide.
 
 timeNs = double(timeIntervalNanoSeconds) * double(0:numSamples - 1);
@@ -311,7 +317,7 @@ timeMs = timeNs / 1e6;
 
 % Channel A
 plot(axes1, timeMs, chA);
-ylim(axes1, [(-1 * chARangeMv) chARangeMv]);
+ylim(axes1, [(-1 * chAInputRange) chAInputRange]);
 
 % Plot the trigger position
 hold(axes1, 'on');
@@ -320,12 +326,12 @@ plot(axes1, timeMs(triggerPosn), chA(triggerPosn), 'rx');
 
 title(axes1, 'Block Data Acquisition');
 xlabel(axes1, 'Time (ms)');
-ylabel(axes1, 'Voltage (mV)');
+ylabel(getVerticalAxisLabel(chAUnits));
 
 grid(axes1, 'on');
 legend(axes1, 'Channel A');
 
-%% Disconnect Device
+%% Disconnect device
 % Disconnect device object from hardware.
 
 disconnect(ps4000aDeviceObj);
