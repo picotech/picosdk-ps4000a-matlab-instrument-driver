@@ -10,7 +10,7 @@ This Instrument Driver package includes the following:
 * The MATLAB Generic Instrument Driver 
 * Example scripts that demonstrate how to call various functions in order to capture data in block, rapid block and streaming mode, as well as control the signal generator (where available).
 
-* The driver can be used with the Test and Measurement Tool to carry out the following: 
+The driver can be used with the Test and Measurement Tool to carry out the following: 
 
   * Acquire data in Block mode 
   * Acquire data in Rapid Block mode 
@@ -68,7 +68,7 @@ You can download the [Programmer's Guide](https://www.picotech.com/download/manu
 
 To view Pico Technology's Hardware Support page, please visit:
 
-http://www.mathworks.co.uk/hardware-support/picoscope.html
+[http://www.mathworks.co.uk/hardware-support/picoscope.html](http://www.mathworks.co.uk/hardware-support/picoscope.html)
 
 ## Obtaining support
 
