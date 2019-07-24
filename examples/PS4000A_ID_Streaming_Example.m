@@ -12,36 +12,36 @@
 % # Disconnect from the instrument 
 %
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Streaming_Example, at the MATLAB command prompt.
+% |PS4000A_ID_Streaming_Example|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_STREAMING_EXAMPLE.M must be on your MATLAB PATH. For
-% additional information on setting your MATLAB PATH, type 'help addpath'
+% The file, |PS4000A_ID_STREAMING_EXAMPLE.M| must be on your MATLAB PATH. For
+% additional information on setting your MATLAB PATH, type |doc addpath|
 % at the MATLAB command prompt.
 %
 % *Example:*
-%     PS4000A_ID_Streaming_Example;
+%     |PS4000A_ID_Streaming_Example|;
 %
 % *Description:*
 %     Demonstrates how to call functions in order to capture data in
-%     streaming mode data from a PicoScope 4000 Series oscilloscope using
-%     the underlying (lib)ps4000a shared library API functions.
+%     streaming mode from a PicoScope 4000 Series oscilloscope.
 %
 % *Note:* Not all device and group object functions used in this example
 % are compatible with the Test and Measurement Tool.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
+% *Copyright:* © Pico Technology Limited 2014-2019. See |LICENSE| file for terms.
 
 %% Suggested input test signals
 % This example was published using the following test signals:
 %
-% * Channel A: 4 Vpp, 1 Hz sine wave
-% * Channel B: 2 Vpp, 2 Hz square wave   
+% * Channel A: 4 V p-p, 1 Hz sine wave
+% * Channel B: 2 V p-p, 2 Hz square wave   
 
 %% Clear command window
 
 clc;
+close all;
 
 %% Load configuration information
 
@@ -161,7 +161,7 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
 end
     
-% Obtain the number of analogue channels on the device from the driver
+% Obtain the number of analog channels on the device from the driver
 numChannels = get(ps4000aDeviceObj, 'channelCount');
 
 for ch = 1:numChannels
@@ -178,25 +178,10 @@ end
 [chARange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
 [chBRange, chBUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B);
 
-% Obtain the maximum Analogue Digital Converter Count value from the driver
+% Obtain the maximum Analog Digital Converter Count value from the driver
 % - this is used for scaling values returned from the driver when data is
 % collected.
 maxADCCount = double(get(ps4000aDeviceObj, 'maxADCValue'));
-
-%% Trigger setup
-% Turn off the trigger.
-%
-% If a trigger is set and the autoStop property in the driver's Streaming
-% group object is set to '1', the device will stop collecting data once the
-% number of post trigger samples have been collected.
-
-% Trigger properties and functions are located in the Instrument
-% Driver's Trigger group.
-
-triggerGroupObj = get(ps4000aDeviceObj, 'Trigger');
-triggerGroupObj = triggerGroupObj(1);
-
-[status.setTriggerOff] = invoke(triggerGroupObj, 'setTriggerOff');
 
 %% Set data buffers
 %
@@ -239,13 +224,13 @@ status.setAppAndDriverBuffersB = invoke(streamingGroupObj, 'setAppAndDriverBuffe
 
 %% Start streaming and collect data
 %
-% Use default value for streaming interval which is 1e-6 for 1 MS/s
-% Collect data for 1 second with auto stop - maximum array size will depend
-% on PC's resources - type 'memory' at MATLAB command prompt for further
-% information.
+% Use default value for streaming interval which is 1e-6 for 1 MS/s.
+% Collect data for 1 second with auto stop. The maximum array size will
+% depend on the PC's resources. For further information, type |memory| in
+% the MATLAB Command Window and press Enter.
 %
-% To change the sample interval set the streamingInterval property of the
-% Streaming group object. The call to |ps4000aRunStreaming| will output the actual
+% To change the sample interval set the |streamingInterval| property of the
+% |Streaming| group object. The call to |ps4000aRunStreaming()| will output the actual
 % sampling interval used by the driver.
 
 % For 200 kS/s, specify 5 us
@@ -506,13 +491,13 @@ end
 fprintf('\n');
 
 %% Stop the device
-% This function should be called regardless of whether the autoStop
+% This function should be called regardless of whether the |autoStop|
 % property is enabled or not.
 
 status.stop = invoke(ps4000aDeviceObj, 'ps4000aStop');
 
 %% Find the number of samples
-% This is the number of samples held in the driver itself. The actual
+% This is the number of samples held in the |(lib)ps4000a| shared library itself. The actual
 % number of samples collected when using a trigger is likely to be greater.
 [status.noOfStreamingValues, numStreamingValues] = invoke(streamingGroupObj, 'ps4000aNoOfStreamingValues');
 

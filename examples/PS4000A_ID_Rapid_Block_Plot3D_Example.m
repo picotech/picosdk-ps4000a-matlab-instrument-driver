@@ -12,29 +12,28 @@
 % # Disconnect from the instrument 
 %
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Rapid_Block_Plot3D_Example, at the MATLAB command prompt.
+% |PS4000A_ID_Rapid_Block_Plot3D_Example|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_RAPID_BLOCK_PLOT3D.M must be on your MATLAB PATH.
+% The file, |PS4000A_ID_RAPID_BLOCK_PLOT3D.M| must be on your MATLAB PATH.
 % For additional information on setting your MATLAB PATH, type 'help
 % addpath' at the MATLAB command prompt.
 %
 % *Example:*
-%     PS4000A_ID_Rapid_Block_Plot3D_Example;
+%     |PS4000A_ID_Rapid_Block_Plot3D_Example|;
 %   
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to
 %     capture data in rapid block mode from a PicoScope 4000 Series
-%     oscilloscope using the underlying (lib)ps4000a shared library API
-%     functions.
+%     oscilloscope.
 %   
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See |LICENSE file| for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: Swept sine wave (Start: 50 Hz, Stop: 1 kHz, Sweep type: Up, Increment: 40 Hz, Increment Time: 10 ms)
+% * Channel A: 4 V p-p, swept sine wave (Start: 50 Hz, Stop: 1 kHz, Sweep type: Up, Increment: 40 Hz, Increment Time: 10 ms)
 
 %% Clear command window and close any figures
 
@@ -81,7 +80,7 @@ connect(ps4000aDeviceObj);
 %
 % Default driver settings applied to channels are listed below - 
 % use |ps4000aSetChannel| to turn channels on or off and set voltage ranges, 
-% coupling, as well as analogue offset.
+% coupling, as well as analog offset.
 %
 % In this example, data is only collected on Channel A so default settings
 % are used and other input channels are switched off.
@@ -146,7 +145,7 @@ set(ps4000aDeviceObj, 'numPostTriggerSamples', 7500);
 % valid timebase index has been selected. In this example, the timebase 
 % index of 49 is valid. 
 
-% Initial call to ps4000aGetTimebase2 with parameters:
+% Initial call to ps4000aGetTimebase2() with parameters:
 % timebase      : 49
 % segment index : 0
 

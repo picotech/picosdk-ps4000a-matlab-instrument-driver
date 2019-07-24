@@ -16,24 +16,22 @@
 % # Disconnect from the instrument 
 %  
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Sig_Gen_Example, at the MATLAB command prompt.
+% |PS4000A_ID_Sig_Gen_Example|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_SIG_GEN_EXAMPLE.M must be on your MATLAB PATH. For
-% additional information on setting your MATLAB PATH, type 'help addpath'
+% The file, |PS4000A_ID_SIG_GEN_EXAMPLE.M| must be on your MATLAB PATH. For
+% additional information on setting your MATLAB PATH, type |doc addpath|
 % at the MATLAB command prompt.
 %
 % *Example:*
-%   PS4000A_ID_Sig_Gen_Example;
+%   |PS4000A_ID_Sig_Gen_Example|;
 %
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to control the signal
-%     generator output (where available) of a PicoScope 4000 Series
-%     oscilloscope using the underlying (lib)ps4000a shared library API
-%     functions.
+%     generator output (where available) of a PicoScope 4000 Series oscilloscope.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © 2014-2018 Pico Technology Limited. See LICENSE file for terms.
+% *Copyright:* © 2014-2018 Pico Technology Limited. See |LICENSE| file for terms.
 
 %% Test setup
 % For this example the 'Gen' output of the oscilloscope was connected to
@@ -91,7 +89,7 @@ sigGenGroupObj = get(ps4000aDeviceObj, 'Signalgenerator');
 sigGenGroupObj = sigGenGroupObj(1);
 
 %% Function generator - simple
-% Output a Sine wave, 2000 mVpp, 0 mV offset, 1000 Hz (uses preset values for 
+% Output a Sine wave, 2000 mV p-p, 0 mV offset, 1000 Hz (uses preset values for 
 % offset, peak to peak voltage and frequency)
 
 % Wavetype : 0 (ps4000aEnuminfo.enPS4000AWaveType.PS4000A_SINE) 
@@ -104,8 +102,8 @@ sigGenGroupObj = sigGenGroupObj(1);
 % 
 
 %% Function generator - sweep frequency
-% Output a square wave, 2400 mVpp, 500 mV offset, and sweep continuously from
-% 500 Hz to 5 0Hz in steps of 50 Hz.
+% Output a square wave, 2400 mV p-p, 500 mV offset, and sweep continuously from
+% 500 Hz to 50 Hz in steps of 50 Hz.
 
 % Set Signalgenerator group properties
 set(ps4000aDeviceObj.Signalgenerator(1), 'startFrequency', 50.0);
@@ -138,7 +136,7 @@ set(ps4000aDeviceObj.Signalgenerator(1), 'peakToPeakVoltage', 2400.0);
 % <<square_wave_sweep_200Hz.PNG>>
 % 
 
-%% Turn Off Signal Generator
+%% Turn off signal generator
 % Sets the output to 0 V DC.
 
 [status.setSigGenOff] = invoke(sigGenGroupObj, 'setSigGenOff');
@@ -149,7 +147,7 @@ set(ps4000aDeviceObj.Signalgenerator(1), 'peakToPeakVoltage', 2400.0);
 % 
 
 %% Arbitrary waveform generator - set parameters
-% Set parameters (2000mVpp, 0mV offset, 2000 Hz frequency) and define an
+% Set parameters (2000 mV p-p, 0 mV offset, 2000 Hz frequency) and define an
 % arbitrary waveform.
 
 % Set Signalgenerator group properties
@@ -184,7 +182,7 @@ y = normalise(sin(x) + sin(2 * x));
 % 
 
 %% Turn off signal generator
-% Sets the output to 0V DC.
+% Sets the output to 0 V DC.
 
 [status.setSigGenOff] = invoke(sigGenGroupObj, 'setSigGenOff');
 
@@ -215,7 +213,7 @@ y = normalise(sin(x) + sin(2 * x));
 % <<arbitrary_waveform_shots.PNG>>
 % 
 
-%% Turn off dignal generator
+%% Turn off signal generator
 % Sets the output to 0 V DC.
 
 [status.setSigGenOff] = invoke(sigGenGroupObj, 'setSigGenOff');

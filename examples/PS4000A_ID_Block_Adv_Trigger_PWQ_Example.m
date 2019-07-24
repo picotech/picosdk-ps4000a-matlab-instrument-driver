@@ -12,29 +12,28 @@
 % # Disconnect from the instrument 
 %
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Block_Adv_Trigger_PWQ_Example, at the MATLAB command prompt.
+% |PS4000A_ID_Block_Adv_Trigger_PWQ_Example|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_BLOCK_ADV_TRIGGER_PWQ_EXAMPLE.M must be on your MATLAB
-% PATH. For additional information on setting your MATLAB PATH, type 'help
-% addpath' at the MATLAB command prompt.
+% The file, |PS4000A_ID_BLOCK_ADV_TRIGGER_PWQ_EXAMPLE.M| must be on your MATLAB
+% PATH. For additional information on setting your MATLAB PATH, type |doc
+% addpath| at the MATLAB command prompt.
 %
 % *Example:*
-%     PS4000A_ID_Block_Adv_Trigger_PWQ_Example;
+%     |PS4000A_ID_Block_Adv_Trigger_PWQ_Example|;
 %
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to
 %     capture a block of data using advanced trigger functions with a pulse
-%     width qualifier from a PicoScope 4000 Series oscilloscope using the
-%     underlying (lib)ps4000a shared library API functions.
+%     width qualifier.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See |LICENSE| file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: 4 Vpp, 2 Hz square wave
+% * Channel A: 4 V p-p, 2 Hz square wave
 
 %% Clear command window and close any figures
 
@@ -120,7 +119,7 @@ end
 % Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer
-% memory has not been segmented in this example) then set the 'timebase'
+% memory has not been segmented in this example) then set the |timebase|
 % property if required.
 %
 % To use the fastest sampling interval possible, set one analog channel
@@ -130,7 +129,7 @@ end
 % valid timebase index has been selected. In this example, the timebase 
 % index of 79 is valid. 
 
-% Initial call to ps4000aGetTimebase2 with parameters:
+% Initial call to ps4000aGetTimebase2() with parameters:
 % timebase      : 79
 % segment index : 0
 
@@ -280,8 +279,8 @@ set(ps4000aDeviceObj, 'numPostTriggerSamples', 2e6);
 %%
 % This example uses the _runBlock_ function in order to collect a block of
 % data - if other code needs to be executed while waiting for the device to
-% indicate that it is ready, use the _ps4000aRunBlock_ function and poll
-% the _ps4000aIsReady_ function.
+% indicate that it is ready, use the |ps4000aRunBlock()| function and poll
+% the |ps4000aIsReady()| function.
 
 % Capture a block of data:
 %

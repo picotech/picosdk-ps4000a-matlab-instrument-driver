@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Streaming Data Capture Example</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="PS4000A_ID_Streaming_Example.m"><style type="text/css">
+      --><title>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Streaming Data Capture Example</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-24"><meta name="DC.source" content="PS4000A_ID_Streaming_Example.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Streaming Data Capture Example</h1><!--introduction--><p>This is an example of an instrument control session using a device object. The instrument control session comprises all the steps you are likely to take when communicating with your instrument.</p><p>These steps are:</p><div><ol><li>Create a device object</li><li>Connect to the instrument</li><li>Configure properties</li><li>Invoke functions</li><li>Disconnect from the instrument</li></ol></div><p>To run the instrument control session, type the name of the file, PS4000A_ID_Streaming_Example, at the MATLAB command prompt.</p><p>The file, PS4000A_ID_STREAMING_EXAMPLE.M must be on your MATLAB PATH. For additional information on setting your MATLAB PATH, type 'help addpath' at the MATLAB command prompt.</p><p><b>Example:</b>     PS4000A_ID_Streaming_Example;</p><p><b>Description:</b>     Demonstrates how to call functions in order to capture data in     streaming mode data from a PicoScope 4000 Series oscilloscope using     the underlying (lib)ps4000a shared library API functions.</p><p><b>Note:</b> Not all device and group object functions used in this example are compatible with the Test and Measurement Tool.</p><p><b>See also:</b> <a href="matlab:doc('icdevice')">icdevice</a> | <a href="matlab:doc('instrument/invoke')">invoke</a></p><p><b>Copyright:</b> &copy; Pico Technology Limited 2014-2019. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Suggested input test signals</a></li><li><a href="#2">Clear command window</a></li><li><a href="#3">Load configuration information</a></li><li><a href="#4">Parameter definitions</a></li><li><a href="#5">Device connection</a></li><li><a href="#6">Display unit information</a></li><li><a href="#7">Channel setup</a></li><li><a href="#8">Trigger setup</a></li><li><a href="#9">Set data buffers</a></li><li><a href="#10">Start streaming and collect data</a></li><li><a href="#11">Stop the device</a></li><li><a href="#12">Find the number of samples</a></li><li><a href="#13">Process data</a></li><li><a href="#14">Disconnect device</a></li></ul></div><h2 id="1">Suggested input test signals</h2><p>This example was published using the following test signals:</p><div><ul><li>Channel A: 4 Vpp, 1 Hz sine wave</li><li>Channel B: 2 Vpp, 2 Hz square wave</li></ul></div><h2 id="2">Clear command window</h2><pre class="codeinput">clc;
+  </style></head><body><div class="content"><h1>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Streaming Data Capture Example</h1><!--introduction--><p>This is an example of an instrument control session using a device object. The instrument control session comprises all the steps you are likely to take when communicating with your instrument.</p><p>These steps are:</p><div><ol><li>Create a device object</li><li>Connect to the instrument</li><li>Configure properties</li><li>Invoke functions</li><li>Disconnect from the instrument</li></ol></div><p>To run the instrument control session, type the name of the file, <tt>PS4000A_ID_Streaming_Example</tt>, at the MATLAB command prompt.</p><p>The file, <tt>PS4000A_ID_STREAMING_EXAMPLE.M</tt> must be on your MATLAB PATH. For additional information on setting your MATLAB PATH, type <tt>doc addpath</tt> at the MATLAB command prompt.</p><p><b>Example:</b>     <tt>PS4000A_ID_Streaming_Example</tt>;</p><p><b>Description:</b>     Demonstrates how to call functions in order to capture data in     streaming mode from a PicoScope 4000 Series oscilloscope.</p><p><b>Note:</b> Not all device and group object functions used in this example are compatible with the Test and Measurement Tool.</p><p><b>See also:</b> <a href="matlab:doc('icdevice')">icdevice</a> | <a href="matlab:doc('instrument/invoke')">invoke</a></p><p><b>Copyright:</b> &copy; Pico Technology Limited 2014-2019. See <tt>LICENSE</tt> file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Suggested input test signals</a></li><li><a href="#2">Clear command window</a></li><li><a href="#3">Load configuration information</a></li><li><a href="#4">Parameter definitions</a></li><li><a href="#5">Device connection</a></li><li><a href="#6">Display unit information</a></li><li><a href="#7">Channel setup</a></li><li><a href="#8">Set data buffers</a></li><li><a href="#9">Start streaming and collect data</a></li><li><a href="#10">Stop the device</a></li><li><a href="#11">Find the number of samples</a></li><li><a href="#12">Process data</a></li><li><a href="#13">Disconnect device</a></li></ul></div><h2 id="1">Suggested input test signals</h2><p>This example was published using the following test signals:</p><div><ul><li>Channel A: 4 V p-p, 1 Hz sine wave</li><li>Channel B: 2 V p-p, 2 Hz square wave</li></ul></div><h2 id="2">Clear command window</h2><pre class="codeinput">clc;
+close <span class="string">all</span>;
 </pre><h2 id="3">Load configuration information</h2><pre class="codeinput">PS4000aConfig;
 </pre><h2 id="4">Parameter definitions</h2><p>Define any parameters that might be required throughout the script.</p><pre class="codeinput">channelA = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A;
 channelB = ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B;
@@ -115,14 +116,14 @@ Copyright &copy; 2014-2019 Pico Technology Ltd. All rights reserved.
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000a_generic.mdd
-      DriverVersion:      1.2.16.4
+      DriverVersion:      1.2.16.5
  
    Communication State
       Status:             closed
 
 Number of units found: 1
 
-Serial number(s): ZZ990/003
+Serial number(s): CU640/107
 
 Opening PicoScope 4000 Series (A API) device...
 
@@ -136,7 +137,7 @@ Opening PicoScope 4000 Series (A API) device...
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000a_generic.mdd
-      DriverVersion:      1.2.16.4
+      DriverVersion:      1.2.16.5
  
    Communication State
       Status:             open
@@ -194,8 +195,6 @@ Channel H:-
 	Range: 5V
 	Analog Offset: 0.0V
 
-Turning off trigger...
-
 Default Block mode parameters:-
 
                Timebase index : 79
@@ -220,7 +219,7 @@ Initialization complete.
 Connected to PicoScope 4000 Series (A API) device:-
 
       Instrument Model: 4824
-   Batch/Serial Number: ZZ990/003
+   Batch/Serial Number: CU640/107
        Analog Channels: 8
              Bandwidth: 20 MHz
          Buffer memory: 256 MS
@@ -232,12 +231,12 @@ Connected to PicoScope 4000 Series (A API) device:-
 disp(<span class="string">'Device information:-'</span>)
 disp(unitInfo);
 </pre><pre class="codeoutput">Device information:-
-    'Driver version: 2.1.0.687'
+    'Driver version: 2.1.17.1454'
     'USB version: 3.0'
     'Hardware version: 1'
     'Variant: 4824'
-    'Batch &amp; Serial: ZZ990/003'
-    'Cal. Date: 19Dec13'
+    'Batch &amp; Serial: CU640/107'
+    'Cal. Date: 19Oct16'
     'Kernel version: 1.2'
     'Digital HW version: 1'
     'Analogue HW version: 1'
@@ -302,7 +301,7 @@ channelSettings(2).analogueOffset   = 0.0;
 
 <span class="keyword">end</span>
 
-<span class="comment">% Obtain the number of analogue channels on the device from the driver</span>
+<span class="comment">% Obtain the number of analog channels on the device from the driver</span>
 numChannels = get(ps4000aDeviceObj, <span class="string">'channelCount'</span>);
 
 <span class="keyword">for</span> ch = 1:numChannels
@@ -319,18 +318,11 @@ numChannels = get(ps4000aDeviceObj, <span class="string">'channelCount'</span>);
 [chARange, chAUnits] = invoke(ps4000aDeviceObj, <span class="string">'getChannelInputRangeAndUnits'</span>, ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
 [chBRange, chBUnits] = invoke(ps4000aDeviceObj, <span class="string">'getChannelInputRangeAndUnits'</span>, ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B);
 
-<span class="comment">% Obtain the maximum Analogue Digital Converter Count value from the driver</span>
+<span class="comment">% Obtain the maximum Analog Digital Converter Count value from the driver</span>
 <span class="comment">% - this is used for scaling values returned from the driver when data is</span>
 <span class="comment">% collected.</span>
 maxADCCount = double(get(ps4000aDeviceObj, <span class="string">'maxADCValue'</span>));
-</pre><h2 id="8">Trigger setup</h2><p>Turn off the trigger.</p><p>If a trigger is set and the autoStop property in the driver's Streaming group object is set to '1', the device will stop collecting data once the number of post trigger samples have been collected.</p><pre class="codeinput"><span class="comment">% Trigger properties and functions are located in the Instrument</span>
-<span class="comment">% Driver's Trigger group.</span>
-
-triggerGroupObj = get(ps4000aDeviceObj, <span class="string">'Trigger'</span>);
-triggerGroupObj = triggerGroupObj(1);
-
-[status.setTriggerOff] = invoke(triggerGroupObj, <span class="string">'setTriggerOff'</span>);
-</pre><h2 id="9">Set data buffers</h2><p>Data buffers for Channel A and B - buffers should be set with the (lib)ps400a shared library, and these <b>MUST</b> be passed with application buffers to the wrapper shared library. This will ensure that data is correctly copied from the shared library buffers for later processing.</p><pre class="codeinput">overviewBufferSize  = 250000; <span class="comment">% Size of the buffer(s) to collect data from the driver's buffer(s).</span>
+</pre><h2 id="8">Set data buffers</h2><p>Data buffers for Channel A and B - buffers should be set with the (lib)ps400a shared library, and these <b>MUST</b> be passed with application buffers to the wrapper shared library. This will ensure that data is correctly copied from the shared library buffers for later processing.</p><pre class="codeinput">overviewBufferSize  = 250000; <span class="comment">% Size of the buffer(s) to collect data from the driver's buffer(s).</span>
 segmentIndex        = 0;
 ratioMode           = ps4000aEnuminfo.enPS4000ARatioMode.PS4000A_RATIO_MODE_NONE;
 
@@ -361,7 +353,7 @@ status.setAppAndDriverBuffersA = invoke(streamingGroupObj, <span class="string">
 
 status.setAppAndDriverBuffersB = invoke(streamingGroupObj, <span class="string">'setAppAndDriverBuffers'</span>, channelB, <span class="keyword">...</span>
    pAppBufferChB, pDriverBufferChB, overviewBufferSize);
-</pre><h2 id="10">Start streaming and collect data</h2><p>Use default value for streaming interval which is 1e-6 for 1 MS/s Collect data for 1 second with auto stop - maximum array size will depend on PC's resources - type 'memory' at MATLAB command prompt for further information.</p><p>To change the sample interval set the streamingInterval property of the Streaming group object. The call to <tt>ps4000aRunStreaming</tt> will output the actual sampling interval used by the driver.</p><pre class="codeinput"><span class="comment">% For 200 kS/s, specify 5 us</span>
+</pre><h2 id="9">Start streaming and collect data</h2><p>Use default value for streaming interval which is 1e-6 for 1 MS/s. Collect data for 1 second with auto stop. The maximum array size will depend on the PC's resources. For further information, type <tt>memory</tt> in the MATLAB Command Window and press Enter.</p><p>To change the sample interval set the <tt>streamingInterval</tt> property of the <tt>Streaming</tt> group object. The call to <tt>ps4000aRunStreaming()</tt> will output the actual sampling interval used by the driver.</p><pre class="codeinput"><span class="comment">% For 200 kS/s, specify 5 us</span>
 <span class="comment">%set(streamingGroupObj, 'streamingInterval', 5e-6);</span>
 
 <span class="comment">% For 10 MS/s, specify 100 ns</span>
@@ -660,13 +652,13 @@ Collected 69632 samples, startIndex: 130064 total: 1949696.
 Collected 50304 samples, startIndex: 199696 total: 2000000.
 AutoStop: TRUE - exiting loop.
 
-</pre><h2 id="11">Stop the device</h2><p>This function should be called regardless of whether the autoStop property is enabled or not.</p><pre class="codeinput">status.stop = invoke(ps4000aDeviceObj, <span class="string">'ps4000aStop'</span>);
-</pre><h2 id="12">Find the number of samples</h2><p>This is the number of samples held in the driver itself. The actual number of samples collected when using a trigger is likely to be greater.</p><pre class="codeinput">[status.noOfStreamingValues, numStreamingValues] = invoke(streamingGroupObj, <span class="string">'ps4000aNoOfStreamingValues'</span>);
+</pre><h2 id="10">Stop the device</h2><p>This function should be called regardless of whether the <tt>autoStop</tt> property is enabled or not.</p><pre class="codeinput">status.stop = invoke(ps4000aDeviceObj, <span class="string">'ps4000aStop'</span>);
+</pre><h2 id="11">Find the number of samples</h2><p>This is the number of samples held in the <tt>(lib)ps4000a</tt> shared library itself. The actual number of samples collected when using a trigger is likely to be greater.</p><pre class="codeinput">[status.noOfStreamingValues, numStreamingValues] = invoke(streamingGroupObj, <span class="string">'ps4000aNoOfStreamingValues'</span>);
 
 fprintf(<span class="string">'Number of samples available from the driver: %u.\n\n'</span>, numStreamingValues);
 </pre><pre class="codeoutput">Number of samples available from the driver: 2000000.
 
-</pre><h2 id="13">Process data</h2><p>Process all data if required</p><pre class="codeinput"><span class="comment">% Reduce size of arrays if required.</span>
+</pre><h2 id="12">Process data</h2><p>Process all data if required</p><pre class="codeinput"><span class="comment">% Reduce size of arrays if required.</span>
 <span class="keyword">if</span> (totalSamples &lt; maxSamples)
 
     pBufferChAFinal.Value(totalSamples + 1:end) = [];
@@ -702,9 +694,9 @@ legend(finalFigureAxes, <span class="string">'Channel A'</span>, <span class="st
 hold(finalFigureAxes, <span class="string">'off'</span>);
 
 movegui(finalFigureAxes, <span class="string">'east'</span>);
-</pre><img vspace="5" hspace="5" src="PS4000A_ID_Streaming_Example_01.png" alt=""> <h2 id="14">Disconnect device</h2><p>Disconnect device object from hardware.</p><pre class="codeinput">disconnect(ps4000aDeviceObj);
+</pre><img vspace="5" hspace="5" src="PS4000A_ID_Streaming_Example_01.png" alt=""> <h2 id="13">Disconnect device</h2><p>Disconnect device object from hardware.</p><pre class="codeinput">disconnect(ps4000aDeviceObj);
 delete(ps4000aDeviceObj);
-</pre><pre class="codeoutput">Connection to PicoScope 4824 with serial number ZZ990/003 closed successfully.
+</pre><pre class="codeoutput">Connection to PicoScope 4824 with serial number CU640/107 closed successfully.
 Libraries unloaded successfully.
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -722,36 +714,36 @@ Libraries unloaded successfully.
 % # Disconnect from the instrument 
 %
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Streaming_Example, at the MATLAB command prompt.
+% |PS4000A_ID_Streaming_Example|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_STREAMING_EXAMPLE.M must be on your MATLAB PATH. For
-% additional information on setting your MATLAB PATH, type 'help addpath'
+% The file, |PS4000A_ID_STREAMING_EXAMPLE.M| must be on your MATLAB PATH. For
+% additional information on setting your MATLAB PATH, type |doc addpath|
 % at the MATLAB command prompt.
 %
 % *Example:*
-%     PS4000A_ID_Streaming_Example;
+%     |PS4000A_ID_Streaming_Example|;
 %
 % *Description:*
 %     Demonstrates how to call functions in order to capture data in
-%     streaming mode data from a PicoScope 4000 Series oscilloscope using
-%     the underlying (lib)ps4000a shared library API functions.
+%     streaming mode from a PicoScope 4000 Series oscilloscope.
 %
 % *Note:* Not all device and group object functions used in this example
 % are compatible with the Test and Measurement Tool.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © Pico Technology Limited 2014-2019. See LICENSE file for terms.
+% *Copyright:* © Pico Technology Limited 2014-2019. See |LICENSE| file for terms.
 
 %% Suggested input test signals
 % This example was published using the following test signals:
 %
-% * Channel A: 4 Vpp, 1 Hz sine wave
-% * Channel B: 2 Vpp, 2 Hz square wave   
+% * Channel A: 4 V p-p, 1 Hz sine wave
+% * Channel B: 2 V p-p, 2 Hz square wave   
 
 %% Clear command window
 
 clc;
+close all;
 
 %% Load configuration information
 
@@ -871,7 +863,7 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     
 end
     
-% Obtain the number of analogue channels on the device from the driver
+% Obtain the number of analog channels on the device from the driver
 numChannels = get(ps4000aDeviceObj, 'channelCount');
 
 for ch = 1:numChannels
@@ -888,25 +880,10 @@ end
 [chARange, chAUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_A);
 [chBRange, chBUnits] = invoke(ps4000aDeviceObj, 'getChannelInputRangeAndUnits', ps4000aEnuminfo.enPS4000AChannel.PS4000A_CHANNEL_B);
 
-% Obtain the maximum Analogue Digital Converter Count value from the driver
+% Obtain the maximum Analog Digital Converter Count value from the driver
 % - this is used for scaling values returned from the driver when data is
 % collected.
 maxADCCount = double(get(ps4000aDeviceObj, 'maxADCValue'));
-
-%% Trigger setup
-% Turn off the trigger.
-%
-% If a trigger is set and the autoStop property in the driver's Streaming
-% group object is set to '1', the device will stop collecting data once the
-% number of post trigger samples have been collected.
-
-% Trigger properties and functions are located in the Instrument
-% Driver's Trigger group.
-
-triggerGroupObj = get(ps4000aDeviceObj, 'Trigger');
-triggerGroupObj = triggerGroupObj(1);
-
-[status.setTriggerOff] = invoke(triggerGroupObj, 'setTriggerOff');
 
 %% Set data buffers
 %
@@ -949,13 +926,13 @@ status.setAppAndDriverBuffersB = invoke(streamingGroupObj, 'setAppAndDriverBuffe
 
 %% Start streaming and collect data
 %
-% Use default value for streaming interval which is 1e-6 for 1 MS/s
-% Collect data for 1 second with auto stop - maximum array size will depend
-% on PC's resources - type 'memory' at MATLAB command prompt for further
-% information.
+% Use default value for streaming interval which is 1e-6 for 1 MS/s.
+% Collect data for 1 second with auto stop. The maximum array size will
+% depend on the PC's resources. For further information, type |memory| in
+% the MATLAB Command Window and press Enter.
 %
-% To change the sample interval set the streamingInterval property of the
-% Streaming group object. The call to |ps4000aRunStreaming| will output the actual
+% To change the sample interval set the |streamingInterval| property of the
+% |Streaming| group object. The call to |ps4000aRunStreaming()| will output the actual
 % sampling interval used by the driver.
 
 % For 200 kS/s, specify 5 us
@@ -1216,13 +1193,13 @@ end
 fprintf('\n');
 
 %% Stop the device
-% This function should be called regardless of whether the autoStop
+% This function should be called regardless of whether the |autoStop|
 % property is enabled or not.
 
 status.stop = invoke(ps4000aDeviceObj, 'ps4000aStop');
 
 %% Find the number of samples
-% This is the number of samples held in the driver itself. The actual
+% This is the number of samples held in the |(lib)ps4000a| shared library itself. The actual
 % number of samples collected when using a trigger is likely to be greater.
 [status.noOfStreamingValues, numStreamingValues] = invoke(streamingGroupObj, 'ps4000aNoOfStreamingValues');
 

@@ -12,31 +12,30 @@
 % # Disconnect from the instrument
 %  
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Block_Example_FFT, at the MATLAB command prompt.
+% |PS4000A_ID_Block_Example_FFT|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_BLOCK_FFT_EXAMPLE.M must be on your MATLAB
+% The file, |PS4000A_ID_BLOCK_FFT_EXAMPLE.M| must be on your MATLAB
 % PATH. For additional information on setting your MATLAB PATH, type
-% 'help addpath' at the MATLAB command prompt.
+% |doc addpath| at the MATLAB command prompt.
 %
 % *Example:*
-%     PS4000A_ID_Block_FFT_Example;
+%     |PS4000A_ID_Block_FFT_Example|;
 %
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to
-%     capture a block of data from a PicoScope 4000 series oscilloscope
-%     using the underlying (lib)ps4000a shared library API functions and
-%     calculate a Fast Fourier Transform (FFT) on data collected from
-%     channel A.
+%     capture a block of data from a PicoScope 4000 Series oscilloscope. A
+%     Fast Fourier Transform (FFT) is then applied to the data collected
+%     on channel A.
 %
 % *See also:* <matlab:doc('fft') fft> | <matlab:doc('icdevice') icdevice> |
 % <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See |LICENSE| file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: 4 Vpp, 50 Hz square wave
+% * Channel A: 4 V p-p, 50 Hz square wave
 
 %% Clear command window and close any figures
 
@@ -137,7 +136,7 @@ end
 % valid timebase index has been selected. In this example, the timebase 
 % index of 79 is valid. 
 
-% Initial call to ps4000aGetTimebase2 with parameters:
+% Initial call to ps4000aGetTimebase2() with parameters:
 % timebase      : 79
 % segment index : 0
 

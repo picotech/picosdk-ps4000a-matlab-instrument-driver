@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Block Data Capture with Advanced Trigger Example</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-04-17"><meta name="DC.source" content="PS4000A_ID_Block_Adv_Trigger_PWQ_Example.m"><style type="text/css">
+      --><title>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Block Data Capture with Advanced Trigger Example</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-24"><meta name="DC.source" content="PS4000A_ID_Block_Adv_Trigger_PWQ_Example.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Block Data Capture with Advanced Trigger Example</h1><!--introduction--><p>This is an example of an instrument control session using a device object. The instrument control session comprises all the steps you are likely to take when communicating with your instrument.</p><p>These steps are:</p><div><ol><li>Create a device object</li><li>Connect to the instrument</li><li>Configure properties</li><li>Invoke functions</li><li>Disconnect from the instrument</li></ol></div><p>To run the instrument control session, type the name of the file, PS4000A_ID_Block_Adv_Trigger_PWQ_Example, at the MATLAB command prompt.</p><p>The file, PS4000A_ID_BLOCK_ADV_TRIGGER_PWQ_EXAMPLE.M must be on your MATLAB PATH. For additional information on setting your MATLAB PATH, type 'help addpath' at the MATLAB command prompt.</p><p><b>Example:</b>     PS4000A_ID_Block_Adv_Trigger_PWQ_Example;</p><p><b>Description:</b>     Demonstrates how to call Instrument Driver functions in order to     capture a block of data using advanced trigger functions with a pulse     width qualifier from a PicoScope 4000 Series oscilloscope using the     underlying (lib)ps4000a shared library API functions.</p><p><b>See also:</b> <a href="matlab:doc('icdevice')">icdevice</a> | <a href="matlab:doc('instrument/invoke')">invoke</a></p><p><b>Copyright:</b> &copy; 2014-2019 Pico Technology Limited. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Suggested input test signal</a></li><li><a href="#2">Clear command window and close any figures</a></li><li><a href="#3">Load configuration information</a></li><li><a href="#4">Device connection</a></li><li><a href="#5">Set channels</a></li><li><a href="#6">Verify timebase index and maximum number of samples</a></li><li><a href="#7">Set advanced trigger with pulse width qualifier</a></li><li><a href="#8">Set block parameters and capture data</a></li><li><a href="#10">Process data</a></li><li><a href="#11">Disconnect device</a></li></ul></div><h2 id="1">Suggested input test signal</h2><p>This example was published using the following test signal:</p><div><ul><li>Channel A: 4 Vpp, 2 Hz square wave</li></ul></div><h2 id="2">Clear command window and close any figures</h2><pre class="codeinput">clc;
+  </style></head><body><div class="content"><h1>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Block Data Capture with Advanced Trigger Example</h1><!--introduction--><p>This is an example of an instrument control session using a device object. The instrument control session comprises all the steps you are likely to take when communicating with your instrument.</p><p>These steps are:</p><div><ol><li>Create a device object</li><li>Connect to the instrument</li><li>Configure properties</li><li>Invoke functions</li><li>Disconnect from the instrument</li></ol></div><p>To run the instrument control session, type the name of the file, <tt>PS4000A_ID_Block_Adv_Trigger_PWQ_Example</tt>, at the MATLAB command prompt.</p><p>The file, <tt>PS4000A_ID_BLOCK_ADV_TRIGGER_PWQ_EXAMPLE.M</tt> must be on your MATLAB PATH. For additional information on setting your MATLAB PATH, type <tt>doc addpath</tt> at the MATLAB command prompt.</p><p><b>Example:</b>     <tt>PS4000A_ID_Block_Adv_Trigger_PWQ_Example</tt>;</p><p><b>Description:</b>     Demonstrates how to call Instrument Driver functions in order to     capture a block of data using advanced trigger functions with a pulse     width qualifier.</p><p><b>See also:</b> <a href="matlab:doc('icdevice')">icdevice</a> | <a href="matlab:doc('instrument/invoke')">invoke</a></p><p><b>Copyright:</b> &copy; 2014-2019 Pico Technology Limited. See <tt>LICENSE</tt> file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Suggested input test signal</a></li><li><a href="#2">Clear command window and close any figures</a></li><li><a href="#3">Load configuration information</a></li><li><a href="#4">Device connection</a></li><li><a href="#5">Set channels</a></li><li><a href="#6">Verify timebase index and maximum number of samples</a></li><li><a href="#7">Set advanced trigger with pulse width qualifier</a></li><li><a href="#8">Set block parameters and capture data</a></li><li><a href="#10">Process data</a></li><li><a href="#11">Disconnect device</a></li></ul></div><h2 id="1">Suggested input test signal</h2><p>This example was published using the following test signal:</p><div><ul><li>Channel A: 4 V p-p, 2 Hz square wave</li></ul></div><h2 id="2">Clear command window and close any figures</h2><pre class="codeinput">clc;
 close <span class="string">all</span>;
 </pre><h2 id="3">Load configuration information</h2><pre class="codeinput">PS4000aConfig;
 </pre><h2 id="4">Device connection</h2><pre class="codeinput"><span class="comment">% Check if an Instrument session using the device object 'ps4000aDeviceObj'</span>
@@ -114,14 +114,14 @@ Copyright &copy; 2014-2019 Pico Technology Ltd. All rights reserved.
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000a_generic.mdd
-      DriverVersion:      1.2.16.4
+      DriverVersion:      1.2.16.5
  
    Communication State
       Status:             closed
 
 Number of units found: 1
 
-Serial number(s): ZZ990/003
+Serial number(s): CU640/107
 
 Opening PicoScope 4000 Series (A API) device...
 
@@ -135,7 +135,7 @@ Opening PicoScope 4000 Series (A API) device...
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000a_generic.mdd
-      DriverVersion:      1.2.16.4
+      DriverVersion:      1.2.16.5
  
    Communication State
       Status:             open
@@ -193,8 +193,6 @@ Channel H:-
 	Range: 5V
 	Analog Offset: 0.0V
 
-Turning off trigger...
-
 Default Block mode parameters:-
 
                Timebase index : 79
@@ -219,7 +217,7 @@ Initialization complete.
 Connected to PicoScope 4000 Series (A API) device:-
 
       Instrument Model: 4824
-   Batch/Serial Number: ZZ990/003
+   Batch/Serial Number: CU640/107
        Analog Channels: 8
              Bandwidth: 20 MHz
          Buffer memory: 256 MS
@@ -250,7 +248,7 @@ Connected to PicoScope 4000 Series (A API) device:-
     [status.setChH] = invoke(ps4000aDeviceObj, <span class="string">'ps4000aSetChannel'</span>, 7, 0, 1, 8, 0.0);
 
 <span class="keyword">end</span>
-</pre><h2 id="6">Verify timebase index and maximum number of samples</h2><p>Driver default timebase index used - use <tt>ps4000aGetTimebase2()</tt> to query the driver as to suitability of using a particular timebase index and the maximum number of samples available in the segment selected (the buffer memory has not been segmented in this example) then set the 'timebase' property if required.</p><p>To use the fastest sampling interval possible, set one analog channel and turn off all other channels.</p><p>Use a while loop to query the function until the status indicates that a valid timebase index has been selected. In this example, the timebase index of 79 is valid.</p><pre class="codeinput"><span class="comment">% Initial call to ps4000aGetTimebase2 with parameters:</span>
+</pre><h2 id="6">Verify timebase index and maximum number of samples</h2><p>Driver default timebase index used - use <tt>ps4000aGetTimebase2()</tt> to query the driver as to suitability of using a particular timebase index and the maximum number of samples available in the segment selected (the buffer memory has not been segmented in this example) then set the <tt>timebase</tt> property if required.</p><p>To use the fastest sampling interval possible, set one analog channel and turn off all other channels.</p><p>Use a while loop to query the function until the status indicates that a valid timebase index has been selected. In this example, the timebase index of 79 is valid.</p><pre class="codeinput"><span class="comment">% Initial call to ps4000aGetTimebase2() with parameters:</span>
 <span class="comment">% timebase      : 79</span>
 <span class="comment">% segment index : 0</span>
 
@@ -385,7 +383,7 @@ blockGroupObj = blockGroupObj(1);
 <span class="comment">% Set pre-trigger and post-trigger samples as required.</span>
 set(ps4000aDeviceObj, <span class="string">'numPreTriggerSamples'</span>, 0);
 set(ps4000aDeviceObj, <span class="string">'numPostTriggerSamples'</span>, 2e6);
-</pre><p>This example uses the <i>runBlock</i> function in order to collect a block of data - if other code needs to be executed while waiting for the device to indicate that it is ready, use the <i>ps4000aRunBlock</i> function and poll the <i>ps4000aIsReady</i> function.</p><pre class="codeinput"><span class="comment">% Capture a block of data:</span>
+</pre><p>This example uses the <i>runBlock</i> function in order to collect a block of data - if other code needs to be executed while waiting for the device to indicate that it is ready, use the <tt>ps4000aRunBlock()</tt> function and poll the <tt>ps4000aIsReady()</tt> function.</p><pre class="codeinput"><span class="comment">% Capture a block of data:</span>
 <span class="comment">%</span>
 <span class="comment">% segment index: 0 (The buffer memory is not segmented in this example)</span>
 
@@ -413,7 +411,7 @@ runBlock: Device ready.
 
 getBlockData: Setting up data buffers...
 getBlockData: Retrieving data...
-getBlockData: Assigning data to array and converting to millivolts.
+getBlockData: Converting ADC counts and assigning to channel array.
 getBlockData: Data succesfully retrieved.
 </pre><h2 id="10">Process data</h2><p>Plot data values returned from the device.</p><pre class="codeinput">figure1 = figure(<span class="string">'Name'</span>,<span class="string">'PicoScope 4000 Series (A API) Example - Block Mode Capture with Adv. Trigger &amp; PWQ'</span>, <span class="keyword">...</span>
     <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>);
@@ -444,7 +442,7 @@ grid(axes1, <span class="string">'on'</span>);
 legend(axes1, <span class="string">'Channel A'</span>);
 </pre><img vspace="5" hspace="5" src="PS4000A_ID_Block_Adv_Trigger_PWQ_Example_01.png" alt=""> <h2 id="11">Disconnect device</h2><p>Disconnect device object from hardware.</p><pre class="codeinput">disconnect(ps4000aDeviceObj);
 delete(ps4000aDeviceObj);
-</pre><pre class="codeoutput">Connection to PicoScope 4824 with serial number ZZ990/003 closed successfully.
+</pre><pre class="codeoutput">Connection to PicoScope 4824 with serial number CU640/107 closed successfully.
 Libraries unloaded successfully.
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -462,29 +460,28 @@ Libraries unloaded successfully.
 % # Disconnect from the instrument 
 %
 % To run the instrument control session, type the name of the file,
-% PS4000A_ID_Block_Adv_Trigger_PWQ_Example, at the MATLAB command prompt.
+% |PS4000A_ID_Block_Adv_Trigger_PWQ_Example|, at the MATLAB command prompt.
 % 
-% The file, PS4000A_ID_BLOCK_ADV_TRIGGER_PWQ_EXAMPLE.M must be on your MATLAB
-% PATH. For additional information on setting your MATLAB PATH, type 'help
-% addpath' at the MATLAB command prompt.
+% The file, |PS4000A_ID_BLOCK_ADV_TRIGGER_PWQ_EXAMPLE.M| must be on your MATLAB
+% PATH. For additional information on setting your MATLAB PATH, type |doc
+% addpath| at the MATLAB command prompt.
 %
 % *Example:*
-%     PS4000A_ID_Block_Adv_Trigger_PWQ_Example;
+%     |PS4000A_ID_Block_Adv_Trigger_PWQ_Example|;
 %
 % *Description:*
 %     Demonstrates how to call Instrument Driver functions in order to
 %     capture a block of data using advanced trigger functions with a pulse
-%     width qualifier from a PicoScope 4000 Series oscilloscope using the
-%     underlying (lib)ps4000a shared library API functions.
+%     width qualifier.
 %
 % *See also:* <matlab:doc('icdevice') icdevice> | <matlab:doc('instrument/invoke') invoke>
 %
-% *Copyright:* © 2014-2019 Pico Technology Limited. See LICENSE file for terms.
+% *Copyright:* © 2014-2019 Pico Technology Limited. See |LICENSE| file for terms.
 
 %% Suggested input test signal
 % This example was published using the following test signal:
 %
-% * Channel A: 4 Vpp, 2 Hz square wave
+% * Channel A: 4 V p-p, 2 Hz square wave
 
 %% Clear command window and close any figures
 
@@ -570,7 +567,7 @@ end
 % Driver default timebase index used - use |ps4000aGetTimebase2()| to query the
 % driver as to suitability of using a particular timebase index and the
 % maximum number of samples available in the segment selected (the buffer
-% memory has not been segmented in this example) then set the 'timebase'
+% memory has not been segmented in this example) then set the |timebase|
 % property if required.
 %
 % To use the fastest sampling interval possible, set one analog channel
@@ -580,7 +577,7 @@ end
 % valid timebase index has been selected. In this example, the timebase 
 % index of 79 is valid. 
 
-% Initial call to ps4000aGetTimebase2 with parameters:
+% Initial call to ps4000aGetTimebase2() with parameters:
 % timebase      : 79
 % segment index : 0
 
@@ -730,8 +727,8 @@ set(ps4000aDeviceObj, 'numPostTriggerSamples', 2e6);
 %%
 % This example uses the _runBlock_ function in order to collect a block of
 % data - if other code needs to be executed while waiting for the device to
-% indicate that it is ready, use the _ps4000aRunBlock_ function and poll
-% the _ps4000aIsReady_ function.
+% indicate that it is ready, use the |ps4000aRunBlock()| function and poll
+% the |ps4000aIsReady()| function.
 
 % Capture a block of data:
 %
