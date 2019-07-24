@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16.4</InstrumentVersion>
+   <InstrumentVersion>1.2.16.5</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -2599,7 +2599,7 @@ For further information, please also refer to the ps4000aSetChannel function.</D
             
             if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
                 
-                fprintf('getBlockData: Assigning data to array and converting to millivolts.\n');
+                fprintf('getBlockData: Converting ADC counts and assigning to channel array.\n');
                 
             end
             
@@ -3171,7 +3171,7 @@ For further information on the ps4000aRunBlock and ps4000aIsReady functions plea
             
             if (deviceObj.DriverData.displayOutput == PicoConstants.TRUE)
                 
-                fprintf('getRapidBlockData: Converting to millivolts and assigning to channel array.\n');
+                fprintf('getRapidBlockData: Converting ADC counts and assigning to channel array.\n');
                 
             end
             
