@@ -1415,8 +1415,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
             
             range = obj.DriverData.constants.PICO_CONNECT_PROBE_CAT3_HV_1KV_RANGES(rangeIndex);
             units = 'V';
-        
-        %{    
+           
         elseif (channelRange &gt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_10A &amp;&amp; ...
                     channelRange &lt;= obj.DriverData.enums.enPicoConnectProbeRange.PICO_CURRENT_CLAMP_2000ARMS_5000A)
                 
@@ -1426,7 +1425,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
             
             range = obj.DriverData.constants.obj.DriverData.constants.PICO_CONNECT_PROBE_CURRENT_CLAMP_2000ARMS_RANGES(rangeIndex);
             units = 'A';
-        %}    
+ 
         else
         
             % Standard scope input ranges
