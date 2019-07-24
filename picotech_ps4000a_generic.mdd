@@ -2253,19 +2253,6 @@ For further information on the ps4000aStop function please refer to the PicoScop
     
     %[etsStatus, stPs] = invoke(obj, 'ps4000aSetEts', 0, 0, 0);
 
-    % Turn off trigger
-
-    fprintf('Turning off trigger...\n\n');
-    
-    obj.DriverData.autoTriggerMs = 0;
-    obj.DriverData.delay = 0;
-    
-    % Obtain Trigger group object
-    
-    triggerGroupObj = get(obj, 'Trigger');
-    triggerGroupObj = triggerGroupObj(1);
-    triggerStatus = invoke(triggerGroupObj, 'setTriggerOff');
-
     fprintf('Default Block mode parameters:-\n\n');
     
     % Set the default number of pre-trigger and post-trigger samples
