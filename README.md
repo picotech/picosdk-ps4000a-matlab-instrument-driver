@@ -33,7 +33,7 @@ For PicoScope 4224, 4224 IEPE, 4424, 4226, 4227 and 4262 models, please use the
 
 ### Prerequisites
 
-* [MATLAB](https://uk.mathworks.com/products/matlab.html) for Microsoft Windows (32- or 64-bit) or Linux operating systems (64-bit).
+* [MATLAB](https://uk.mathworks.com/products/matlab.html) for Microsoft Windows or Linux operating systems.
 * [Instrument Control Toolbox](http://www.mathworks.co.uk/products/instrument/)
 * The [PicoScope Support Toolbox](http://uk.mathworks.com/matlabcentral/fileexchange/53681-picoscope-support-toolbox)
 
