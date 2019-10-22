@@ -181,10 +181,10 @@ end
 % Check if PicoScope Support Toolbox is installed - using code based on
 % <http://stackoverflow.com/questions/6926021/how-to-check-if-matlab-toolbox-installed-in-matlab How to check if matlab toolbox installed in matlab>
 
-ps5000aConfigInfo.psTbxName = 'PicoScope Support Toolbox';
-ps5000aConfigInfo.v = ver; % Find installed toolbox information
+ps4000aConfigInfo.psTbxName = 'PicoScope Support Toolbox';
+ps4000aConfigInfo.v = ver; % Find installed toolbox information
 
-if (~any(strcmp(ps5000aConfigInfo.psTbxName, {ps5000aConfigInfo.v.Name})))
+if (~any(strcmp(ps4000aConfigInfo.psTbxName, {ps4000aConfigInfo.v.Name})))
    
     warning('PS5000aConfig:PSTbxNotFound', 'PicoScope Support Toolbox not found, searching for folder.');
     
@@ -192,18 +192,18 @@ if (~any(strcmp(ps5000aConfigInfo.psTbxName, {ps5000aConfigInfo.v.Name})))
     % if the folder is on the MATLAB path, having been downloaded via zip
     % file.
     
-    ps5000aConfigInfo.psTbxFound = strfind(path, ps5000aConfigInfo.psTbxName);
+    ps4000aConfigInfo.psTbxFound = strfind(path, ps4000aConfigInfo.psTbxName);
     
-    if (isempty(ps5000aConfigInfo.psTbxFound))
+    if (isempty(ps4000aConfigInfo.psTbxFound))
         
-        ps5000aConfigInfo.psTbxNotFoundWarningMsg = sprintf(['Please either:\n'...
+        ps4000aConfigInfo.psTbxNotFoundWarningMsg = sprintf(['Please either:\n'...
             '(1) install the PicoScope Support Toolbox via the Add-Ons Explorer or\n'...
             '(2) download the zip file from MATLAB Central File Exchange and add the location of the extracted contents to the MATLAB path.']);
         
-        warning('PS5000aConfig:PSTbxDirNotFound', ['PicoScope Support Toolbox not found. ', ps5000aConfigInfo.psTbxNotFoundWarningMsg]);
+        warning('PS5000aConfig:PSTbxDirNotFound', ['PicoScope Support Toolbox not found. ', ps4000aConfigInfo.psTbxNotFoundWarningMsg]);
         
-        ps5000aConfigInfo.f = warndlg(ps5000aConfigInfo.psTbxNotFoundWarningMsg, 'PicoScope Support Toolbox Not Found', 'modal');
-        uiwait(ps5000aConfigInfo.f);
+        ps4000aConfigInfo.f = warndlg(ps4000aConfigInfo.psTbxNotFoundWarningMsg, 'PicoScope Support Toolbox Not Found', 'modal');
+        uiwait(ps4000aConfigInfo.f);
         
         web('https://uk.mathworks.com/matlabcentral/fileexchange/53681-picoscope-support-toolbox');
             
