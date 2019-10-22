@@ -30,8 +30,7 @@
 %
 % This file can be edited to suit application requirements.
 %
-% Reference page in Help browser
-%   doc PS4000aConfig
+% Copyright: © 2014-2019 Pico Technology Ltd. See LICENSE file for terms.
 
 %% Set Path to Shared Libraries
 % Set paths to shared library files according to the operating system and
