@@ -40,8 +40,10 @@ clc;
 close all;
 
 %% Load configuration information
+% Setup paths and also load struct and enumeration information. Enumeration
+% values are required for certain function calls.
 
-PS4000aConfig;
+[ps4000aStructs, ps4000aEnuminfo] = ps4000aSetConfig(); % DO NOT EDIT THIS LINE.
 
 %% Device connection
 
@@ -110,6 +112,15 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
     [status.setChF] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 5, 0, 1, 8, 0.0);
     [status.setChG] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 6, 0, 1, 8, 0.0);
     [status.setChH] = invoke(ps4000aDeviceObj, 'ps4000aSetChannel', 7, 0, 1, 8, 0.0);
+
+end
+
+%% Set device resolution (PicoScope 4444 only)
+% The PicoScope 4444 can be set to 12- or 14-bit resolution.
+
+if (ps4000aDeviceObj.hasFlexibleResolution == PicoConstants.TRUE)
+
+    [status.setResolution] = invoke(ps4000aDeviceObj, 'ps4000aSetDeviceResolution', 14);
 
 end
 
