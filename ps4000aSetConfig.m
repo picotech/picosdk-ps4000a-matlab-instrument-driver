@@ -66,7 +66,7 @@ function [ps4000aStructs, ps4000aEnuminfo] = ps4000aSetConfig()
 
         catch err
 
-            error('PS4000aConfig:OperatingSystemNotSupported', 'Operating system not supported - please contact support@picotech.com');
+            error('ps4000aSetConfig:OperatingSystemNotSupported', 'Operating system not supported - please contact support@picotech.com');
 
         end
 
@@ -169,7 +169,7 @@ function [ps4000aStructs, ps4000aEnuminfo] = ps4000aSetConfig()
 
     else
 
-        error('PS4000aConfig:OperatingSystemNotSupported', 'Operating system not supported - please contact support@picotech.com');
+        error('ps4000aSetConfig:OperatingSystemNotSupported', 'Operating system not supported - please contact support@picotech.com');
 
     end
 
@@ -208,7 +208,7 @@ function [ps4000aStructs, ps4000aEnuminfo] = ps4000aSetConfig()
             web('https://uk.mathworks.com/matlabcentral/fileexchange/53681-picoscope-support-toolbox');
 
         end
-
+        
     end
 
     % Change back to the folder where the script was called from.
