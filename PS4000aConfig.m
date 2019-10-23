@@ -30,8 +30,7 @@
 %
 % This file can be edited to suit application requirements.
 %
-% Reference page in Help browser
-%   doc PS4000aConfig
+% Copyright: © 2014-2019 Pico Technology Ltd. See LICENSE file for terms.
 
 %% Set Path to Shared Libraries
 % Set paths to shared library files according to the operating system and
@@ -166,7 +165,7 @@ else
     
 end
 
-%% Set Path for PicoScope Support Toolbox Files if Not Installed
+%% Set path for PicoScope Support Toolbox files if not installed
 % Set MATLAB Path to include location of PicoScope Support Toolbox
 % Functions and Classes if the Toolbox has not been installed. Installation
 % of the toolbox is only supported in MATLAB 2014b and later versions.
@@ -183,31 +182,22 @@ if (~any(strcmp(ps4000aConfigInfo.psTbxName, {ps4000aConfigInfo.v.Name})))
     
     % If the PicoScope Support Toolbox has not been installed, check to see
     % if the folder is on the MATLAB path, having been downloaded via zip
-    % file or copied from the Microsoft Windows Pico SDK installer
-    % directory.
+    % file.
     
     ps4000aConfigInfo.psTbxFound = strfind(path, ps4000aConfigInfo.psTbxName);
     
-    if (isempty(ps4000aConfigInfo.psTbxFound) && ispc())
+    if (isempty(ps4000aConfigInfo.psTbxFound))
         
-        % Check if the folder is present in the relevant SDK installation
-        % directory on Windows platforms (if the SDK installer has been
-        % used).
+        ps4000aConfigInfo.psTbxNotFoundWarningMsg = sprintf(['Please either:\n'...
+            '(1) install the PicoScope Support Toolbox via the Add-Ons Explorer or\n'...
+            '(2) download the zip file from MATLAB Central File Exchange and add the location of the extracted contents to the MATLAB path.']);
         
-        % Obtain the folder name
-        ps4000aConfigInfo.psTbxFolderName = fullfile(ps4000aConfigInfo.winSDKInstallPath, 'MATLAB' , ps4000aConfigInfo.psTbxName);
-
-        % If it is present in the SDK directory, add the PicoScope Support
-        % Toolbox folder and sub-folders to the MATLAB path.
-        if (exist(ps4000aConfigInfo.psTbxFolderName, 'dir') == 7)
-
-            addpath(genpath(ps4000aConfigInfo.psTbxFolderName));
-
-        end
-            
-    else
+        warning('PS4000aConfig:PSTbxDirNotFound', ['PicoScope Support Toolbox not found. ', ps4000aConfigInfo.psTbxNotFoundWarningMsg]);
         
-        warning('PS4000aConfig:PSTbxDirNotFound', 'PicoScope Support Toolbox directory not found.');
+        ps4000aConfigInfo.f = warndlg(ps4000aConfigInfo.psTbxNotFoundWarningMsg, 'PicoScope Support Toolbox Not Found', 'modal');
+        uiwait(ps4000aConfigInfo.f);
+        
+        web('https://uk.mathworks.com/matlabcentral/fileexchange/53681-picoscope-support-toolbox');
             
     end
     
