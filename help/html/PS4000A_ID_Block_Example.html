@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Block Data Capture Example</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-10-23"><meta name="DC.source" content="PS4000A_ID_Block_Example.m"><style type="text/css">
+      --><title>PicoScope 4000 Series (A API) Instrument Driver Oscilloscope Block Data Capture Example</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-10-24"><meta name="DC.source" content="PS4000A_ID_Block_Example.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -114,7 +114,7 @@ Copyright &copy; 2014-2019 Pico Technology Ltd. All rights reserved.
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000a_generic.mdd
-      DriverVersion:      1.2.16.7
+      DriverVersion:      1.2.16.9
  
    Communication State
       Status:             closed
@@ -135,7 +135,7 @@ Opening PicoScope 4000 Series (A API) device...
    Driver Information
       DriverType:         MATLAB generic
       DriverName:         picotech_ps4000a_generic.mdd
-      DriverVersion:      1.2.16.7
+      DriverVersion:      1.2.16.9
  
    Communication State
       Status:             open
@@ -220,7 +220,7 @@ Connected to PicoScope 4000 Series (A API) device:-
     [status.setChH] = invoke(ps4000aDeviceObj, <span class="string">'ps4000aSetChannel'</span>, 7, 0, 1, 8, 0.0);
 
 <span class="keyword">end</span>
-</pre><h2 id="6">Set device resolution (PicoScope 4444 only)</h2><p>The PicoScope 4444 can be set to 12- or 14-bit resolution.</p><pre class="codeinput"><span class="keyword">if</span> (ps4000aDeviceObj.hasFlexibleResolution == PicoConstants.TRUE)
+</pre><h2 id="6">Set device resolution (PicoScope 4444 only)</h2><p>The PicoScope 4444 has selectable resolution and can be set to 12- or 14-bit resolution.</p><pre class="codeinput"><span class="keyword">if</span> (ps4000aDeviceObj.isFlexResDevice == PicoConstants.TRUE)
 
     [status.setResolution] = invoke(ps4000aDeviceObj, <span class="string">'ps4000aSetDeviceResolution'</span>, 14);
 
@@ -460,9 +460,10 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 end
 
 %% Set device resolution (PicoScope 4444 only)
-% The PicoScope 4444 can be set to 12- or 14-bit resolution.
+% The PicoScope 4444 has selectable resolution and can be set to 12- or
+% 14-bit resolution.
 
-if (ps4000aDeviceObj.hasFlexibleResolution == PicoConstants.TRUE)
+if (ps4000aDeviceObj.isFlexResDevice == PicoConstants.TRUE)
 
     [status.setResolution] = invoke(ps4000aDeviceObj, 'ps4000aSetDeviceResolution', 14);
 

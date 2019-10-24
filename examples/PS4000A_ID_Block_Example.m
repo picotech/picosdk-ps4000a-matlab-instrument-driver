@@ -116,9 +116,10 @@ if (ps4000aDeviceObj.channelCount == PicoConstants.OCTO_SCOPE)
 end
 
 %% Set device resolution (PicoScope 4444 only)
-% The PicoScope 4444 can be set to 12- or 14-bit resolution.
+% The PicoScope 4444 has selectable resolution and can be set to 12- or
+% 14-bit resolution.
 
-if (ps4000aDeviceObj.hasFlexibleResolution == PicoConstants.TRUE)
+if (ps4000aDeviceObj.isFlexResDevice == PicoConstants.TRUE)
 
     [status.setResolution] = invoke(ps4000aDeviceObj, 'ps4000aSetDeviceResolution', 14);
 
