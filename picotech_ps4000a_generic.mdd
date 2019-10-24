@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16.8</InstrumentVersion>
+   <InstrumentVersion>1.2.16.9</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -325,7 +325,7 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
-                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
             case obj.DriverData.variants.MODEL_PS4425
@@ -337,7 +337,7 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
-                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
             case obj.DriverData.variants.MODEL_PS4444
@@ -349,7 +349,7 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
-                obj.DriverData.hasFlexibleResolution = PicoConstants.TRUE;
+                obj.DriverData.isFlexResDevice = PicoConstants.TRUE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
                 
             case obj.DriverData.variants.MODEL_PS4824
@@ -361,7 +361,7 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
-                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
             otherwise
@@ -374,10 +374,11 @@
                 obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_ZERO;
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_ZERO;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_ZERO;
-                obj.DriverData.hasFlexibleResolution = PicoConstants.FALSE;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
-                error('Unit not supported');
+                error('Picotech:PS4000AInstrumentDriver:UnitNotSupported', ...
+                    'Connect: This device is not supported by the Instrument Driver.');
 
         end
         
@@ -406,7 +407,7 @@
         end
         
         % Confirm the device resolution if it has flexible resolution
-        if (obj.DriverData.hasFlexibleResolution == PicoConstants.TRUE)
+        if (obj.DriverData.isFlexResDevice == PicoConstants.TRUE)
             
             pResolution = libpointer('enPS4000ADeviceResolution', obj.DriverData.enums.enPS4000ADeviceResolution.PS4000A_DR_12BIT);
                       
@@ -955,38 +956,6 @@ Note: Output will still be sent to the Command Window when calling the icdevice,
                <Description>Enumeration corresponding to the lowest voltage range supported by the device.</Description>
             </Property>
             <Property>
-               <Name>hasFlexibleResolution</Name>
-               <Location>parent</Location>
-               <CapabilityGroup>Base</CapabilityGroup>
-               <Type>MCode</Type>
-               <Code>
-                  <GetMCode>function propertyValue = getProperty(obj, propertyName)
-% Return a property value.
-%   This function is called to return the device or group object property
-%   value. If the property is a group property, OBJ is the group object. If
-%   the property is a base device property, OBJ is the device object.
-
-    propertyValue = obj.DriverData.hasFlexibleResolution;</GetMCode>
-                  <SetMCode>function set(obj, propertyName, propertyValue)
-% Set a property value.
-%   This function is called to set the device or group object property
-%   value. If the property is a group property, OBJ is the group object. If
-%   the property is a base device property, OBJ is the device object.
-</SetMCode>
-               </Code>
-               <PermissibleType>
-                  <Type>Double</Type>
-                  <Constraint>enum</Constraint>
-                  <ConstraintValue>
-                     <Value>0.0</Value>
-                     <Value>1.0</Value>
-                  </ConstraintValue>
-               </PermissibleType>
-               <DefaultValue>0</DefaultValue>
-               <ReadOnly>never</ReadOnly>
-               <Description>Indicates if the device has Flexible resolution.</Description>
-            </Property>
-            <Property>
                <Name>hasHardwareEts</Name>
                <Location>parent</Location>
                <CapabilityGroup>Base</CapabilityGroup>
@@ -1048,6 +1017,38 @@ Note: Output will still be sent to the Command Window when calling the icdevice,
                <DefaultValue>0</DefaultValue>
                <ReadOnly>never</ReadOnly>
                <Description>Specifies whether the PicoScope model has an intelligent probe interface for use with PicoConnect (TM) probes.</Description>
+            </Property>
+            <Property>
+               <Name>isFlexResDevice</Name>
+               <Location>parent</Location>
+               <CapabilityGroup>Base</CapabilityGroup>
+               <Type>MCode</Type>
+               <Code>
+                  <GetMCode>function propertyValue = getProperty(obj, propertyName)
+% Return a property value.
+%   This function is called to return the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+
+    propertyValue = obj.DriverData.isFlexResDevice;</GetMCode>
+                  <SetMCode>function set(obj, propertyName, propertyValue)
+% Set a property value.
+%   This function is called to set the device or group object property
+%   value. If the property is a group property, OBJ is the group object. If
+%   the property is a base device property, OBJ is the device object.
+</SetMCode>
+               </Code>
+               <PermissibleType>
+                  <Type>Double</Type>
+                  <Constraint>enum</Constraint>
+                  <ConstraintValue>
+                     <Value>0.0</Value>
+                     <Value>1.0</Value>
+                  </ConstraintValue>
+               </PermissibleType>
+               <DefaultValue>0</DefaultValue>
+               <ReadOnly>never</ReadOnly>
+               <Description>Indicates if the device is a FlexRes® oscilloscope.</Description>
             </Property>
             <Property>
                <Name>lastRange</Name>
@@ -1270,7 +1271,7 @@ When used in Streaming mode, this is the maximum number of raw samples before th
 
     % Find the device resolution if it has Flexible resolution.
     % If it does not, the default resolution of 12 bits should be returned.
-    if (obj.DriverData.hasFlexibleResolution == PicoConstants.TRUE)
+    if (obj.DriverData.isFlexResDevice == PicoConstants.TRUE)
     
         pResolution = libpointer('enPS4000ADeviceResolution', obj.DriverData.enums.enPS4000ADeviceResolution.PS4000A_DR_12BIT);
                       
