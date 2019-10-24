@@ -377,6 +377,7 @@
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
+                cleanup(obj);
                 error('Picotech:PS4000AInstrumentDriver:UnitNotSupported', ...
                     'Connect: This device is not supported by the Instrument Driver.');
 
