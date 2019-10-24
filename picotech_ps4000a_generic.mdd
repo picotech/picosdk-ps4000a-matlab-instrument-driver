@@ -6,7 +6,7 @@
    <InstrumentType>Oscilloscope</InstrumentType>
    <InstrumentManufacturer>Pico Technology Ltd.</InstrumentManufacturer>
    <InstrumentModel>PicoScope 4000 Series (A API)</InstrumentModel>
-   <InstrumentVersion>1.2.16.9</InstrumentVersion>
+   <InstrumentVersion>1.2.16.10</InstrumentVersion>
    <Identify/>
    <Reset/>
    <Selftest/>
@@ -366,7 +366,6 @@
 
             otherwise
 
-                obj.InstrumentModel = obj.DriverData.variants.MODEL_NONE; 
                 obj.DriverData.channelCount = 0;
                 obj.DriverData.firstRange = range10mV;
                 obj.DriverData.lastRange = range50V;
@@ -377,7 +376,7 @@
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
 
-                cleanup(obj);
+                disconnect(obj);
                 error('Picotech:PS4000AInstrumentDriver:UnitNotSupported', ...
                     'Connect: This device is not supported by the Instrument Driver.');
 
