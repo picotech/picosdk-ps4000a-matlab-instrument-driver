@@ -23,6 +23,7 @@ The driver will work with the following PicoScope models:
 * PicoScope 4225 & 4425
 * PicoScope 4444
 * PicoScope 4824
+* PicoScope 4225A & 4425A
 
 **Note:**
 

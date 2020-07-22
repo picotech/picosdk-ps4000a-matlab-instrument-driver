@@ -171,6 +171,8 @@
     obj.DriverData.variants.MODEL_PS4425   = '4425';
     obj.DriverData.variants.MODEL_PS4444   = '4444';
     obj.DriverData.variants.MODEL_PS4824   = '4824';
+    obj.DriverData.variants.MODEL_PS4225A   = '4225A';
+    obj.DriverData.variants.MODEL_PS4425A   = '4425A';
     
     % Obtain flag to indicate if functions should output text to Command
     % Window
@@ -363,6 +365,30 @@
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
+                
+            case obj.DriverData.variants.MODEL_PS4225A
+
+                obj.DriverData.channelCount = PicoConstants.DUAL_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+            
+            case obj.DriverData.variants.MODEL_PS4425A
+
+                obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;    
 
             otherwise
 
