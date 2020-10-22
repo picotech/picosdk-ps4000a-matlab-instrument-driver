@@ -194,6 +194,7 @@ y = normalise(sin(x) + sin(2 * x));
 % Arb. Waveform  : y (defined above)
 % Sweep Type     : 0 (ps4000aEnuminfo.enPS4000ASweepType.PS4000A_UP)
 % Operation      : 0 (ps4000aEnuminfo.enPS4000AExtraOperations.PS4000A_ES_OFF)
+% indexMode      : 0
 % Shots          : 2 
 % Sweeps         : 0
 % Trigger Type   : 0 (ps4000aEnuminfo.enPS4000ASigGenTrigType.PS4000A_SIGGEN_RISING)
