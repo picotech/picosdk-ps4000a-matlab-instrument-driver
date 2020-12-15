@@ -388,8 +388,32 @@
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
-                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;    
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+                
+            case obj.DriverData.variants.MODEL_PS4224A
 
+                obj.DriverData.channelCount = PicoConstants.DUAL_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+            
+            case obj.DriverData.variants.MODEL_PS4424A
+
+                obj.DriverData.channelCount = PicoConstants.QUAD_SCOPE;
+                obj.DriverData.firstRange = range50mV;
+                obj.DriverData.lastRange = range200V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_250MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+                
             otherwise
 
                 obj.DriverData.channelCount = 0;
