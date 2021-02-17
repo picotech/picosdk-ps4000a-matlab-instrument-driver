@@ -173,6 +173,9 @@
     obj.DriverData.variants.MODEL_PS4824   = '4824';
     obj.DriverData.variants.MODEL_PS4225A   = '4225A';
     obj.DriverData.variants.MODEL_PS4425A   = '4425A';
+    obj.DriverData.variants.MODEL_PS4224A   = '4224A';
+    obj.DriverData.variants.MODEL_PS4424A   = '4424A';
+    obj.DriverData.variants.MODEL_PS4824A   = '4824A';
     
     % Obtain flag to indicate if functions should output text to Command
     % Window
@@ -413,6 +416,18 @@
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_400MSPS;
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
                 obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+                
+            case obj.DriverData.variants.MODEL_PS4824A
+
+                obj.DriverData.channelCount = PicoConstants.OCTO_SCOPE;
+                obj.DriverData.firstRange = range10mV;
+                obj.DriverData.lastRange = range50V;
+                obj.DriverData.hasHardwareEts = PicoConstants.FALSE;
+                obj.DriverData.bufferMemory = PicoConstants.BUFFER_MEMORY_256MS;
+                obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
+                obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
+                obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
                 
             otherwise
 
