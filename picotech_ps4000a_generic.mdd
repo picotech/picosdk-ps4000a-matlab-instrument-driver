@@ -403,7 +403,7 @@
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
-                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
             
             case obj.DriverData.variants.MODEL_PS4424A
 
@@ -415,7 +415,7 @@
                 obj.DriverData.bandwidth = PicoConstants.BANDWIDTH_20MHZ;
                 obj.DriverData.maxSamplingRate = PicoConstants.MAX_SAMPLING_RATE_80MSPS;
                 obj.DriverData.isFlexResDevice = PicoConstants.FALSE;
-                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.TRUE;
+                obj.DriverData.hasIntelligentProbeInterface = PicoConstants.FALSE;
                 
             case obj.DriverData.variants.MODEL_PS4824A
 
