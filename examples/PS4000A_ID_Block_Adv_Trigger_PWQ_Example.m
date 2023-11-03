@@ -322,8 +322,9 @@ plot(axes1, timeMs, chA);
 ylim(axes1, [(-1 * chAInputRange) chAInputRange]);
 
 % Plot the trigger position
+numPreTriggerSamples = get(ps4000aDeviceObj, 'numPreTriggerSamples');
 hold(axes1, 'on');
-triggerPosn = (numSamples)/2 + 1;
+triggerPosn = numPreTriggerSamples + 1;
 plot(axes1, timeMs(triggerPosn), chA(triggerPosn), 'rx');
 
 title(axes1, 'Block Data Acquisition');
